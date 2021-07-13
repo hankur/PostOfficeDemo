@@ -21,4 +21,8 @@ export class ShipmentService extends BaseService {
   finalize(number: string): Promise<Response> {
     return super.post(null, `/${number}/Finalize`);
   }
+
+  createShipment(shipment: any): Promise<Response> {
+    return super.post(shipment);
+  }
 }

@@ -19,8 +19,7 @@ namespace WebApp.Controllers
         }
 
         private AppBLL AppBLL { get; }
-
-
+        
         [HttpGet("List")]
         public async Task<ActionResult<List<Shipment>>> GetShipments()
         {

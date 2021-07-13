@@ -19,6 +19,12 @@ namespace WebApp.Controllers
 
         private AppBLL AppBLL { get; }
 
+        [HttpGet("List")]
+        public async Task<ActionResult<List<Bag>>> GetBags()
+        {
+            return Ok(await AppBLL.Bags.All());
+        }
+
         [HttpPost]
         public async Task<ActionResult<Bag>> CreateBag(BagModel bagModel)
         {
@@ -56,7 +62,7 @@ namespace WebApp.Controllers
             var bag = BagMapper.MapToDomain(bagModel);
             var shipment = await AppBLL.Shipments.FindIncluded(bag.ShipmentNumber);
 
-            ValidateShipment(shipment, bag);
+            await ValidateShipment(shipment, bag);
             if (ModelState.ErrorCount > 0)
                 return null;
 
