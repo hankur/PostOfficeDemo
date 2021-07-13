@@ -22,8 +22,7 @@ namespace Core.BLL
         }
 
         public ShipmentService Shipments => ServiceProvider.GetService<ShipmentService>();
-        public LetterBagService LetterBags => ServiceProvider.GetService<LetterBagService>();
-        public ParcelBagService ParcelBags => ServiceProvider.GetService<ParcelBagService>();
+        public BagService Bags => ServiceProvider.GetService<BagService>();
         public ParcelService Parcels => ServiceProvider.GetService<ParcelService>();
     }
 }

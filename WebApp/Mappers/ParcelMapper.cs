@@ -1,6 +1,4 @@
-using System.Collections.Generic;
 using Core.Domain;
-using Core.Domain.Bag;
 using WebApp.Models;
 
 namespace WebApp.Mappers

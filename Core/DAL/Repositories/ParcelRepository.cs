@@ -1,9 +1,8 @@
-using Core.DAL.Base;
 using Core.Domain;
 
 namespace Core.DAL.Repositories
 {
-    public class ParcelRepository : BaseRepository<Shipment>
+    public class ParcelRepository : BaseRepository<Parcel>
     {
         public ParcelRepository(AppDbContext repositoryDbContext) : base(repositoryDbContext)
         {

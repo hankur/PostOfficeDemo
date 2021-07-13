@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 
-namespace Core.DAL.Base
+namespace Core.DAL.Repositories
 {
     public class BaseRepository<TDomainEntity>
         where TDomainEntity : class, new()

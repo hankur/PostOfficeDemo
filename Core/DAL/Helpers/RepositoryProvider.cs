@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using Core.DAL.Base;
+using Core.DAL.Repositories;
 
 namespace Core.DAL.Helpers
 {

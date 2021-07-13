@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Net.Http.Headers;
 using Microsoft.OpenApi.Models;
 using ServiceProvider = Core.BLL.Helpers.ServiceProvider;
 
@@ -21,6 +22,7 @@ namespace WebApp
         }
 
         public IConfiguration Configuration { get; }
+        private const string CorsPolicy = "CorsAllowAll";
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
@@ -38,6 +40,22 @@ namespace WebApp
             services.AddSingleton<ServiceFactory>();
             services.AddScoped<ServiceProvider>();
             services.AddScoped<AppBLL>();
+
+            services.AddCors(options =>
+            {
+                options.AddPolicy(CorsPolicy, builder =>
+                {
+                    builder
+                        .WithOrigins("http://localhost:8080")
+                        .WithHeaders(
+                            "cache",
+                            HeaderNames.Accept,
+                            HeaderNames.Authorization,
+                            HeaderNames.ContentType,
+                            HeaderNames.Origin)
+                        .WithMethods("OPTIONS", "GET", "POST");
+                });
+            });
 
             services.AddControllers().AddNewtonsoftJson();
             services.AddSwaggerGen(c =>
@@ -68,6 +86,8 @@ namespace WebApp
 
             app.UseRouting();
 
+            app.UseCors(CorsPolicy);
+            
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints => { endpoints.MapControllers(); });

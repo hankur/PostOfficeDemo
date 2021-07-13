@@ -1,0 +1,48 @@
+<template>
+  <require from="helpers/value-converters"></require>
+  <require from="components/loading"></require>
+  <!--<require from="components/bag-list"></require>-->
+
+  <template if.bind="shipments !== undefined && shipments.length > 0">
+    <table id="accordion" class="table table-borderless table-sm table-responsive-md accordion">
+      <thead>
+        <tr>
+          <th>Shipment number</th>
+          <th>Airport</th>
+          <th>Flight number</th>
+          <th>Flight date</th>
+          <th>Finalized</th>
+          <th>Finalize?</th>
+        </tr>
+      </thead>
+
+      <tbody repeat.for="shipment of shipments" class="hover">
+        <tr class="shipment-row clickable" click.delegate="toggleBagList(shipment)">
+          <td>${shipment.number}</td>
+          <td>${shipment.airport}</td>
+          <td>${shipment.flightNumber}</td>
+          <td>${shipment.flightDate | datetimeFormat}</td>
+          <td>${shipment.finalized}</td>
+          <td><button type="button" class="btn btn-success"
+                    click.trigger="finalize(shipment)">Finalize</button></td>
+        </tr>
+
+        <tr class="bag-list-row hover">
+          <td colspan="5" class="p-0">
+            <div class="collapse px-5" data-bs-parent="#accordion"
+                 data-bag-list.bind="shipment.number">
+              <!--<bag-list if.bind="shipment.showOrders" bags.bind="shipment.bags"></bag-list>-->
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </template>
+
+  <loading else error.bind="error" error-title="Error" error-details.bind="error"
+           not-found.bind="shipments !== undefined && shipments.length == 0"
+           not-found-title="Not found"
+           not-found-details="No shipments were found, please create some and come back">
+  </loading>
+
+</template>

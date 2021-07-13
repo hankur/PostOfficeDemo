@@ -24,8 +24,7 @@ namespace Core.BLL.Helpers
         {
             AddToCreationMethods(uow => new ShipmentService(uow));
             AddToCreationMethods(uow => new ParcelService(uow));
-            AddToCreationMethods(uow => new ParcelBagService(uow));
-            AddToCreationMethods(uow => new LetterBagService(uow));
+            AddToCreationMethods(uow => new BagService(uow));
         }
 
 

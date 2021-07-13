@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Core.DAL;
-using Core.DAL.Base;
+using Core.DAL.Repositories;
 
 namespace Core.BLL.Services
 {
@@ -10,6 +9,11 @@ namespace Core.BLL.Services
     {
         protected BaseRepository<TDomainEntity> ServiceRepository;
 
+        protected BaseService(BaseRepository<TDomainEntity> serviceRepository)
+        {
+            ServiceRepository = serviceRepository;
+        }
+        
         public virtual async Task<List<TDomainEntity>> All()
         {
             return await ServiceRepository.All();

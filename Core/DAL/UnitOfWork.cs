@@ -1,5 +1,4 @@
 ﻿using System.Threading.Tasks;
-using Core.DAL.Base;
 using Core.DAL.Helpers;
 using Core.DAL.Repositories;
 
@@ -10,10 +9,8 @@ namespace Core.DAL
         protected readonly AppDbContext UowDbContext;
         protected readonly RepositoryProvider RepositoryProvider;
         
-        public LetterBagRepository LetterBags =>
-            RepositoryProvider.GetRepository<LetterBagRepository>();
-        public ParcelBagRepository ParcelBags =>
-            RepositoryProvider.GetRepository<ParcelBagRepository>();
+        public BagRepository Bags =>
+            RepositoryProvider.GetRepository<BagRepository>();
         public ParcelRepository Parcels =>
             RepositoryProvider.GetRepository<ParcelRepository>();
         public ShipmentRepository Shipments =>

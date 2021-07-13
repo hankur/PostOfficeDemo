@@ -1,0 +1,23 @@
+<template>
+
+  <div class="card border-danger w-100" if.bind="error">
+    <div class="card-body text-danger">
+      <h5 class="card-title">${errorTitle}</h5>
+      <p class="card-text ${errorDetailsClass}">${errorDetails}</p>
+    </div>
+  </div>
+
+  <template else>
+    <div class="card border-primary" if.bind="notFound">
+      <div class="card-body text-primary">
+        <h5 class="card-title">${notFoundTitle}</h5>
+        <p class="card-text ${notFoundDetailsClass}">${notFoundDetails}</p>
+      </div>
+    </div>
+
+    <div class="w-100 text-center" else>
+      <div class="spinner-border" role="status"></div>
+    </div>
+  </template>
+
+</template>

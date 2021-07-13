@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
 namespace WebApp.Models
@@ -5,18 +6,20 @@ namespace WebApp.Models
     public class ParcelModel
     {
         [Required]
-        [StringLength(10)]
-        // Matches if string is in this format: "LLNNNNNNLL", where L – letter, N – digit
-        [RegularExpression(@"^[a-zA-Z]{2}[0-9]{6}[a-zA-Z]{2}$")]
+        [DisplayName("Parcel number")]
+        [RegularExpression(@"^[a-zA-Z]{2}[0-9]{6}[a-zA-Z]{2}$", 
+            ErrorMessage = "Value must be in the format 'LLNNNNNNLL', where L – letter, N – digit")]
         public string Number { get; set; }
         
         [Required]
         [StringLength(100)]
+        [DisplayName("Recipient name")]
         public string Recipient { get; set; }
         
         [Required]
-        [StringLength(2)]
-        [RegularExpression(@"^[A-Z]{2}$")]
+        [DisplayName("Destination country")]
+        [RegularExpression(@"^[A-Z]{2}$", 
+            ErrorMessage = "Value must be in the format 'LL', where L – uppercase letter")]
         public string Destination { get; set; }
         
         [Required]
@@ -28,9 +31,9 @@ namespace WebApp.Models
         public decimal Price { get; set; }
 
         [Required]
-        [StringLength(15)]
-        // Matches if string contains only letters and numbers
-        [RegularExpression(@"^[a-zA-Z0-9]+$")]
+        [DisplayName("Bag number")]
+        [RegularExpression(@"^[a-zA-Z0-9]{1,15}$", 
+            ErrorMessage = "Value can only contain 1-15 letters and/or digits")]
         public string BagNumber { get; set; }
     }
 }

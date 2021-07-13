@@ -12,21 +12,22 @@ namespace WebApp.Controllers
     [Route("api/v1/[controller]")]
     public class ParcelController : ControllerBase
     {
-        private AppBLL AppBLL { get; set; }
-        
         public ParcelController(AppBLL appBLL)
         {
             AppBLL = appBLL;
         }
 
+        private AppBLL AppBLL { get; }
+
         [HttpPost]
         public async Task<ActionResult<Parcel>> CreateParcel(ParcelModel parcelModel)
         {
-            var parcel = ParcelMapper.MapToDomain(parcelModel);
-            var newParcel = await AppBLL.Parcels.Add(parcel);
-            
+            var parcel = await ValidateAndCreate(parcelModel);
+            if (parcel == null)
+                return BadRequest(ModelState);
+
             await AppBLL.SaveChangesAsync();
-            return Ok(newParcel);
+            return Ok(parcel);
         }
 
         [HttpPost("List")]
@@ -35,12 +36,38 @@ namespace WebApp.Controllers
             var newParcels = new List<Parcel>();
             foreach (var parcelModel in parcelModels)
             {
-                var parcel = ParcelMapper.MapToDomain(parcelModel);
-                newParcels.Add(await AppBLL.Parcels.Add(parcel));
+                var parcel = await ValidateAndCreate(parcelModel);
+                if (parcel == null)
+                    return BadRequest(ModelState);
+
+                newParcels.Add(parcel);
             }
-            
+
             await AppBLL.SaveChangesAsync();
             return Ok(newParcels);
+        }
+
+        private async Task<Parcel> ValidateAndCreate(ParcelModel parcelModel)
+        {
+            if (decimal.Round(parcelModel.Weight, 3) != parcelModel.Weight)
+                ModelState.AddModelError(nameof(ParcelModel.Weight), "Too many decimal places");
+            if (decimal.Round(parcelModel.Price, 3) != parcelModel.Price)
+                ModelState.AddModelError(nameof(ParcelModel.Price), "Too many decimal places");
+
+            var parcel = ParcelMapper.MapToDomain(parcelModel);
+            var bag = await AppBLL.Bags.FindIncluded(parcel.BagNumber);
+
+            if (bag == null)
+                ModelState.AddModelError(nameof(ParcelModel.BagNumber), "Bag not found");
+            if (await AppBLL.Parcels.Find(parcel.Number) != null)
+                ModelState.AddModelError(nameof(ParcelModel.Number),
+                    "Parcel with identical Number already created");
+
+            if (bag == null || ModelState.ErrorCount > 0)
+                return null;
+
+            bag.Parcels.Add(parcel);
+            return parcel;
         }
     }
 }

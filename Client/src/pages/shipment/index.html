@@ -1,0 +1,42 @@
+<template>
+
+  <div class="card me-md-2 mb-2 mb-md-0">
+    <div class="card-body d-flex flex-column h-100">
+      <h4 class="card-title">Create a new shipment</h4>
+
+      <form class="mt-3" id="create-shipment-form" submit.delegate="submit()"
+            ref="createShipmentForm">
+        <div class="form-group">
+          <label for="number">Shipment number</label>
+          <input type="text" class="form-control" id="number" placeholder="XXX-XXXXXX">
+        </div>
+
+        <div class="form-group">
+          <label for="airport">Airport</label>
+
+          <select class="form-select form-select-sm" id="airport" value.bind="airport">
+            <option>TAL</option>
+            <option>RIX</option>
+            <option>HEL</option>
+          </select>
+          </fieldset>
+
+          <div class="form-group">
+            <label for="flight-number">Flight number</label>
+            <input type="text" class="form-control" id="flight-number" placeholder="LLNNNN">
+          </div>
+
+          <div class="form-group">
+            <label for="flight-date">Flight date</label>
+            <input type="datetime-local" class="form-control" id="flight-date">
+          </div>
+      </form>
+
+      <button type="submit" form="create-shipment-form"
+              class="card-link btn btn-outline-success align-self-end">
+        Create
+      </button>
+    </div>
+  </div>
+
+</template>

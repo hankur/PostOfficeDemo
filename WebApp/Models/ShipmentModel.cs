@@ -1,27 +1,30 @@
 using System;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using Core.Domain;
 
 namespace WebApp.Models
 {
     public class ShipmentModel
     {
         [Required]
-        [StringLength(10)]
-        // Matches if string is in this format: "XXX-XXXXXX", where X – letter or digit
-        [RegularExpression(@"^[a-zA-Z0-9]{3}-[a-zA-Z0-9]{6}$")]
+        [DisplayName("Shipment number")]
+        [RegularExpression(@"^[a-zA-Z0-9]{3}-[a-zA-Z0-9]{6}$", 
+            ErrorMessage = "Value must be in the format 'XXX-XXXXXX', where X – letter or digit")]
         public string Number { get; set; }
 
         [Required]
-        public Airport Airport { get; set; }
+        [RegularExpression(@"^(TLL)|(RIX)|(HEL)$", 
+            ErrorMessage = "Value must be either 'TLL', 'RIX', or 'HEL'")]
+        public string Airport { get; set; }
         
         [Required]
-        [StringLength(6)]
-        // Matches if string is in this format: "LLNNNN", where L – letter, N – digit
-        [RegularExpression(@"^[a-zA-Z]{2}[0-9]{4}$")]
+        [DisplayName("Flight number")]
+        [RegularExpression(@"^[a-zA-Z]{2}[0-9]{4}$", 
+            ErrorMessage = "Value must be in the format 'LLNNNN', where L – letter, N – digit")]
         public string FlightNumber { get; set; }
 
         [Required]
+        [DisplayName("Flight date")]
         public DateTime FlightDate { get; set; }
     }
 }

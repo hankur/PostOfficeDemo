@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Core.BLL;
 using Core.Domain;
@@ -29,11 +30,12 @@ namespace WebApp.Controllers
         [HttpPost]
         public async Task<ActionResult<Shipment>> CreateShipment(ShipmentModel shipmentModel)
         {
-            var shipment = ShipmentMapper.MapToDomain(shipmentModel);
-            var newShipment = await AppBLL.Shipments.Add(shipment);
+            var shipment = await ValidateAndCreate(shipmentModel);
+            if (shipment == null)
+                return BadRequest(ModelState);
 
             await AppBLL.SaveChangesAsync();
-            return Ok(newShipment);
+            return Ok(shipment);
         }
 
         [HttpPost("List")]
@@ -43,8 +45,11 @@ namespace WebApp.Controllers
             var newShipments = new List<Shipment>();
             foreach (var shipmentModel in shipmentModels)
             {
-                var shipment = ShipmentMapper.MapToDomain(shipmentModel);
-                newShipments.Add(await AppBLL.Shipments.Add(shipment));
+                var shipment = await ValidateAndCreate(shipmentModel);
+                if (shipment == null)
+                    return BadRequest(ModelState);
+
+                newShipments.Add(shipment);
             }
 
             await AppBLL.SaveChangesAsync();
@@ -54,11 +59,61 @@ namespace WebApp.Controllers
         [HttpPost("{shipmentNumber}/Finalize")]
         public async Task<ActionResult<Shipment>> Finalize(string shipmentNumber)
         {
-            var shipment = await AppBLL.Shipments.Find(shipmentNumber);
-            shipment.Finalized = true;
-
+            var shipment = await ValidateAndFinalize(shipmentNumber);
+            if (shipment == null)
+                return BadRequest(ModelState);
+            
             await AppBLL.SaveChangesAsync();
             return Ok(shipment);
+        }
+
+        private async Task<Shipment> ValidateAndFinalize(string shipmentNumber)
+        {
+            var shipment = await AppBLL.Shipments.FindIncluded(shipmentNumber);
+
+            if (shipment == null)
+            {
+                ModelState.AddModelError(nameof(ShipmentModel.Number), "Shipment not found");
+                return null;
+            }
+
+            if (shipment.FlightDate < DateTime.Now)
+                ModelState.AddModelError(nameof(ShipmentModel.FlightDate), 
+                    "Flight date cannot be in the past");
+
+            if (shipment.Bags.Count == 0)
+                ModelState.AddModelError(nameof(Shipment.Bags),
+                    "Shipment is missing bags");
+
+            foreach (var bag in shipment.Bags)
+            {
+                if (bag.Type == BagType.Parcels && bag.Parcels.Count == 0)
+                    ModelState.AddModelError(nameof(Shipment.Bags),
+                        $"Bag number '{bag.Number}' is missing parcels");
+            }
+            
+            if (ModelState.ErrorCount > 0)
+                return null;
+
+            shipment.Finalized = true;
+            return shipment;
+        }
+
+        private async Task<Shipment> ValidateAndCreate(ShipmentModel shipmentModel)
+        {
+            if (await AppBLL.Shipments.Find(shipmentModel.Number) != null)
+                ModelState.AddModelError(nameof(ShipmentModel.Number),
+                    "Shipment with identical Number already created");
+
+            if (shipmentModel.FlightDate < DateTime.Now)
+                ModelState.AddModelError(nameof(ShipmentModel.FlightDate), 
+                    "Flight date cannot be in the past");
+            
+            if (ModelState.ErrorCount > 0)
+                return null;
+
+            var shipment = ShipmentMapper.MapToDomain(shipmentModel);
+            return await AppBLL.Shipments.Add(shipment);
         }
     }
 }
