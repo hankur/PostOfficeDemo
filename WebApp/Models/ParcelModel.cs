@@ -3,6 +3,9 @@ using System.ComponentModel.DataAnnotations;
 
 namespace WebApp.Models
 {
+    /// <summary>
+    /// Input model for ParcelController endpoints
+    /// </summary>
     public class ParcelModel
     {
         /// <summary>Shipment number must be in the format 'LLNNNNNNLL', where L – letter, N – digit</summary>
@@ -12,13 +15,13 @@ namespace WebApp.Models
             ErrorMessage = "Value must be in the format 'LLNNNNNNLL', where L – letter, N – digit")]
         public string Number { get; set; }
         
-        /// <summary>Recipient name can contain up to 100 characters"</summary>
+        /// <summary>Recipient name can contain up to 100 characters</summary>
         [Required]
         [StringLength(100)]
         [DisplayName("Recipient name")]
         public string Recipient { get; set; }
         
-        /// <summary>Destination country must be in the format 'LL', where L – uppercase letter"</summary>
+        /// <summary>Destination country must be in the format 'LL', where L – uppercase letter</summary>
         [Required]
         [DisplayName("Destination country")]
         [RegularExpression(@"^[A-Z]{2}$", 

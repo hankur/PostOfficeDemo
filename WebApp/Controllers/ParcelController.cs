@@ -9,10 +9,14 @@ using WebApp.Models;
 
 namespace WebApp.Controllers
 {
+    /// <summary>
+    /// Controller for parcel-related endpoints
+    /// </summary>
     [ApiController]
     [Route("api/v1/[controller]")]
     public class ParcelController : ControllerBase
     {
+        /// <inheritdoc />
         public ParcelController(AppBLL appBLL)
         {
             AppBLL = appBLL;

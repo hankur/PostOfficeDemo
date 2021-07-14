@@ -4,6 +4,9 @@ using System.ComponentModel.DataAnnotations;
 
 namespace WebApp.Models
 {
+    /// <summary>
+    /// Input model for ShipmentController endpoints
+    /// </summary>
     public class ShipmentModel
     {
         /// <summary>Shipment number must be in the format 'XXX-XXXXXX', where X – letter or digit</summary>

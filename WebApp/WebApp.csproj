@@ -14,4 +14,9 @@
       <ProjectReference Include="..\Core\Core.csproj" />
     </ItemGroup>
 
+    <PropertyGroup>
+        <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\WebApp.xml</DocumentationFile>
+        <LangVersion>latest</LangVersion>
+    </PropertyGroup>
+
 </Project>

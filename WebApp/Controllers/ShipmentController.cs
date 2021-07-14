@@ -10,10 +10,14 @@ using WebApp.Models;
 
 namespace WebApp.Controllers
 {
+    /// <summary>
+    /// Controller for shipment-related endpoints
+    /// </summary>
     [ApiController]
     [Route("api/v1/[controller]")]
     public class ShipmentController : ControllerBase
     {
+        /// <inheritdoc />
         public ShipmentController(AppBLL appBLL)
         {
             AppBLL = appBLL;

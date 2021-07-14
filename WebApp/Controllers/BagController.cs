@@ -9,10 +9,14 @@ using WebApp.Models;
 
 namespace WebApp.Controllers
 {
+    /// <summary>
+    /// Controller for bag-related endpoints
+    /// </summary>
     [ApiController]
     [Route("api/v1/[controller]")]
     public class BagController : ControllerBase
     {
+        /// <inheritdoc />
         public BagController(AppBLL appBLL)
         {
             AppBLL = appBLL;

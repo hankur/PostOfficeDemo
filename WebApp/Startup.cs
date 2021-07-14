@@ -1,3 +1,6 @@
+using System;
+using System.IO;
+using System.Reflection;
 using Core.BLL;
 using Core.BLL.Helpers;
 using Core.DAL;
@@ -11,6 +14,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Net.Http.Headers;
 using Microsoft.OpenApi.Models;
 using ServiceProvider = Core.BLL.Helpers.ServiceProvider;
+#pragma warning disable 1591
 
 namespace WebApp
 {
@@ -62,9 +66,14 @@ namespace WebApp
             {
                 c.SwaggerDoc("v1", new OpenApiInfo
                 {
-                    Title = "WebApp", Version = "v1", 
+                    Title = "PostOffice API", Version = "v1", 
                     Description = "Source code: https://github.com/hankur/PostOfficeDemo"
                 });
+                
+                // include xml comments (enable creation in csproj file)
+                var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+                c.IncludeXmlComments(xmlPath);
             });
         }
 

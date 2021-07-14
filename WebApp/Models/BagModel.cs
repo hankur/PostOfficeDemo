@@ -4,6 +4,9 @@ using Core.Domain;
 
 namespace WebApp.Models
 {
+    /// <summary>
+    /// Input model for BagController endpoints
+    /// </summary>
     public class BagModel
     {
         /// <summary>Bag number, allowed only 1-15 letters and/or digits</summary>
