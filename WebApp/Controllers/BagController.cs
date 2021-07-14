@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Core.BLL;
 using Core.Domain;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using WebApp.Mappers;
 using WebApp.Models;
@@ -19,12 +20,20 @@ namespace WebApp.Controllers
 
         private AppBLL AppBLL { get; }
 
+        /// <summary>Get all bags in the system (not including parcels)</summary>
+        /// <returns>List of bags</returns>
+        [ProducesResponseType(StatusCodes.Status200OK)]
         [HttpGet("List")]
         public async Task<ActionResult<List<Bag>>> GetBags()
         {
             return Ok(await AppBLL.Bags.All());
         }
 
+        /// <summary>Create a new bag</summary>
+        /// <returns>A newly created bag</returns>
+        /// <param name="bagModel">Bag model</param>
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [HttpPost]
         public async Task<ActionResult<Bag>> CreateBag(BagModel bagModel)
         {
@@ -36,6 +45,11 @@ namespace WebApp.Controllers
             return Ok(bag);
         }
 
+        /// <summary>Create many new bags</summary>
+        /// <returns>A list of newly created bags</returns>
+        /// <param name="bagModels">List of bag models</param>
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [HttpPost("List")]
         public async Task<ActionResult<List<Bag>>> CreateBags(List<BagModel> bagModels)
         {

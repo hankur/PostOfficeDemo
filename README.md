@@ -29,14 +29,14 @@ The client application provides a simple overview of shipments, bags and parcels
 2. If you wish, you can configure the backend launch settings in `WebApp/Properties/launchSettings.json`
 3. Navigate to the WebApp folder and run [`dotnet run`](https://docs.microsoft.com/en-us/dotnet/core/tools/dotnet-run)
 4. If you wish, you can configure the frontend launch settings in `Client/aurelia_project/aurelia.json`. You can also configure the backend URL in `Client/config/environment.json`
-4. Navigate to the Client folder and run [`npm start`](https://docs.npmjs.com/cli/v7/commands/npm-start). You can learn more by reading the README.md in the Client folder
+4. Navigate to the Client folder and run [`npm start`](https://docs.npmjs.com/cli/v7/commands/npm-start). You can learn more by reading the [Client/README.md](Client/README.md)
 5. Both backend and frontend websites should be open in the browser now. If not, navigate (by default) to https://localhost:5001/ for backend API docs and https://localhost:8080/ for frontend client application
 
 ### Build and deploy
 
 #### Build
-1. Run `dotnet publish -c Release -r linux-x64 --self-contained true` to build the backend app for Linux systems and build the required dependencies into the application itself
-2. Run `npm run build` to build the frontend app. You can learn more by reading the README.md in the Client folder
+1. Navigate to the WebApp folder and run `dotnet publish -c Release -r linux-x64 --self-contained true` to build the backend app for Linux systems and build the required dependencies into the application itself
+2. Navigate to the Client folder and run `npm run build` to build the frontend app. You can learn more by reading the [Client/README.md](Client/README.md)
 
 #### Deploy
 
@@ -48,4 +48,5 @@ The client application provides a simple overview of shipments, bags and parcels
 ## TODO
 
 - Unit tests
-- add missing CRUD operations (currently, only Create and Read are supported)
+- Add missing CRUD operations (currently, only Create and Read are supported)
+- Better structure for bags (currently they share the same object, but this isn't really ideal)

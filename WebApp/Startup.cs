@@ -60,7 +60,11 @@ namespace WebApp
             services.AddControllers().AddNewtonsoftJson();
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo {Title = "WebApp", Version = "v1"});
+                c.SwaggerDoc("v1", new OpenApiInfo
+                {
+                    Title = "WebApp", Version = "v1", 
+                    Description = "Source code: https://github.com/hankur/PostOfficeDemo"
+                });
             });
         }
 

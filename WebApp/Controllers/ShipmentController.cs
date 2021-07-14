@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Core.BLL;
 using Core.Domain;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using WebApp.Mappers;
 using WebApp.Models;
@@ -20,12 +21,20 @@ namespace WebApp.Controllers
 
         private AppBLL AppBLL { get; }
         
+        /// <summary>Get all shipments in the system with included bags and parcels</summary>
+        /// <returns>List of shipments</returns>
+        [ProducesResponseType(StatusCodes.Status200OK)]
         [HttpGet("List")]
         public async Task<ActionResult<List<Shipment>>> GetShipments()
         {
             return Ok(await AppBLL.Shipments.All());
         }
         
+        /// <summary>Create a new shipment</summary>
+        /// <returns>A newly created shipment</returns>
+        /// <param name="shipmentModel">Shipment model</param>
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [HttpPost]
         public async Task<ActionResult<Shipment>> CreateShipment(ShipmentModel shipmentModel)
         {
@@ -37,6 +46,11 @@ namespace WebApp.Controllers
             return Ok(shipment);
         }
 
+        /// <summary>Create many new shipments</summary>
+        /// <returns>A list of newly created shipments</returns>
+        /// <param name="shipmentModels">List of shipment models</param>
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [HttpPost("List")]
         public async Task<ActionResult<List<Shipment>>> CreateShipments(
             List<ShipmentModel> shipmentModels)
@@ -55,6 +69,10 @@ namespace WebApp.Controllers
             return Ok(newShipments);
         }
 
+        /// <summary>Finalize the shipment so it can't be modified anymore</summary>
+        /// <param name="shipmentNumber">Shipment number</param>
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [HttpPost("{shipmentNumber}/Finalize")]
         public async Task<ActionResult<Shipment>> Finalize(string shipmentNumber)
         {

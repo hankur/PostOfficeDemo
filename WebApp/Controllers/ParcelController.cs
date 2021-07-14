@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Core.BLL;
 using Core.Domain;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using WebApp.Mappers;
 using WebApp.Models;
@@ -19,6 +20,11 @@ namespace WebApp.Controllers
 
         private AppBLL AppBLL { get; }
 
+        /// <summary>Create a new parcel</summary>
+        /// <returns>A newly created parcel</returns>
+        /// <param name="parcelModel">Parcel model</param>
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [HttpPost]
         public async Task<ActionResult<Parcel>> CreateParcel(ParcelModel parcelModel)
         {
@@ -30,6 +36,11 @@ namespace WebApp.Controllers
             return Ok(parcel);
         }
 
+        /// <summary>Create many new parcels</summary>
+        /// <returns>A list of newly created parcels</returns>
+        /// <param name="parcelModels">List of parcel models</param>
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [HttpPost("List")]
         public async Task<ActionResult<List<Parcel>>> CreateParcels(List<ParcelModel> parcelModels)
         {
