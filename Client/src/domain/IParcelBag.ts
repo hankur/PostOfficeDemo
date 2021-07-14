@@ -3,5 +3,4 @@ import { IParcel } from "./IParcel";
 
 export interface IParcelBag extends IBag {
   parcels: IParcel[];
-  totalPrice: number;
 }

@@ -1,6 +1,5 @@
-import { IWeighedPriced } from "./base/IWeighedPriced";
 import { IBag } from "./IBag";
 
-export interface ILetterBag extends IBag, IWeighedPriced {
+export interface ILetterBag extends IBag {
   letterCount: number;
 }

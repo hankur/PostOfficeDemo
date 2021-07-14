@@ -1,0 +1,27 @@
+<template>
+  <require from="helpers/value-converters"></require>
+
+  <table id="accordion-bags" class="table w-100">
+    <thead>
+      <tr>
+        <th>Parcel number</th>
+        <th>Recipient name</th>
+        <th>Destination country</th>
+        <th class="text-end">Weight</th>
+        <th class="text-end">Price</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <tr repeat.for="parcel of parcels" class="hover">
+        <td>${parcel.number}</td>
+        <td>${parcel.recipient}</td>
+        <td>${parcel.destination}</td>
+        <td class="text-end">${parcel.weight} kg</td>
+        <td class="text-end">${parcel.price | currencyFormat}</td>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+</template>

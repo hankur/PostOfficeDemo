@@ -1,0 +1,37 @@
+<template>
+  <require from="helpers/value-converters"></require>
+  <require from="components/parcel-list"></require>
+
+  <table id="accordion-bags" class="table w-100">
+    <thead>
+      <tr>
+        <th>Bag number</th>
+        <th>Bag type</th>
+        <th class="text-end">Count of letters</th>
+        <th class="text-end">Weight</th>
+        <th class="text-end">Price</th>
+      </tr>
+    </thead>
+
+    <tbody repeat.for="bag of bags" class="hover">
+      <tr class="${bag.letterCount ? '' : 'clickable'}" click.delegate="toggleParcelList(bag)">
+        <td>${bag.number}</td>
+        <td>${bag.typeName}</td>
+        <td class="text-end">${bag.letterCount | printOrNone}</td>
+        <td class="text-end">${bag.weight} kg</td>
+        <td class="text-end">${bag.price | currencyFormat}</td>
+        </td>
+      </tr>
+
+      <tr class="parcel-list-row hover" data-bag.bind="bag.number">
+        <td colspan="7" class="p-0">
+          <div class="collapse px-5" data-parcel-list.bind="bag.number"
+               data-bs-parent="#accordion-bags">
+            <parcel-list parcels.bind="bag.parcels"></parcel-list>
+          </div>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+</template>

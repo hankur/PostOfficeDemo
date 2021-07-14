@@ -1,7 +1,7 @@
 <template>
   <require from="helpers/value-converters"></require>
   <require from="components/loading"></require>
-  <!--<require from="components/bag-list"></require>-->
+  <require from="components/bag-list"></require>
 
   <template if.bind="shipments !== undefined && shipments.length > 0">
     <table id="accordion" class="table table-borderless table-sm table-responsive-md accordion">
@@ -23,15 +23,15 @@
           <td>${shipment.flightNumber}</td>
           <td>${shipment.flightDate | datetimeFormat}</td>
           <td>${shipment.finalized}</td>
-          <td><button type="button" class="btn btn-success"
-                    click.trigger="finalize(shipment)">Finalize</button></td>
+          <td><button type="button" class="btn btn-success" click.trigger="finalize(shipment)"
+                    if.bind="!shipment.finalized">Finalize</button></td>
         </tr>
 
         <tr class="bag-list-row hover">
-          <td colspan="5" class="p-0">
+          <td colspan="6" class="p-0">
             <div class="collapse px-5" data-bs-parent="#accordion"
                  data-bag-list.bind="shipment.number">
-              <!--<bag-list if.bind="shipment.showOrders" bags.bind="shipment.bags"></bag-list>-->
+              <bag-list bags.bind="shipment.bags"></bag-list>
             </div>
           </td>
         </tr>
@@ -39,7 +39,8 @@
     </table>
   </template>
 
-  <loading else error.bind="error" error-title="Error" error-details.bind="error"
+  <loading else error.bind="errorTitle" error-title.bind="errorTitle"
+           error-details.bind="errorDetails"
            not-found.bind="shipments !== undefined && shipments.length == 0"
            not-found-title="Not found"
            not-found-details="No shipments were found, please create some and come back">

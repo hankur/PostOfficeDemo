@@ -1,49 +1,53 @@
 <template>
+  <require from="components/loading"></require>
 
-  <div class="col-md px-0">
-    <div class="card me-md-2 mb-2 mb-md-0">
-      <div class="card-body d-flex flex-column h-100">
-        <h4 class="card-title">Create a new parcel</h4>
+  <div class="card me-md-2 mb-2 mb-md-0">
+    <div class="card-body d-flex flex-column h-100">
+      <h4 class="card-title">Create a new parcel</h4>
 
-        <form class="mt-3" id="create-parcel-form" submit.delegate="submit()">
-          <select class="form-select form-select-sm" id="bag" value.bind="bagNumber">
-            <option selected>Choose a bag...</option>
-            <option repeat.for="bag of bags" model.bind="bag.number">
-              ${bag.number}
-            </option>
-          </select>
+      <form class="mt-3" id="create-parcel-form" submit.delegate="submit()">
+        <select class="form-select form-select-sm" id="bag" value.bind="bagNumber">
+          <option value="" selected>Choose a bag...</option>
+          <option repeat.for="bag of bags" model.bind="bag.number">
+            ${bag.number}
+          </option>
+        </select>
 
-          <div class="form-group">
-            <label for="number">Parcel number</label>
-            <input type="text" class="form-control" id="number" value.bind="number">
-          </div>
+        <div class="form-group">
+          <label for="number">Parcel number</label>
+          <input type="text" class="form-control" id="number" value.bind="number">
+        </div>
 
-          <div class="form-group">
-            <label for="recipient">Recipient name</label>
-            <input type="text" class="form-control" id="recipient" value.bind="recipient">
-          </div>
+        <div class="form-group">
+          <label for="recipient">Recipient name</label>
+          <input type="text" class="form-control" id="recipient" value.bind="recipient">
+        </div>
 
-          <div class="form-group">
-            <label for="destination">Destination country</label>
-            <input type="text" class="form-control" id="destination" value.bind="destination">
-          </div>
+        <div class="form-group">
+          <label for="destination">Destination country</label>
+          <input type="text" class="form-control" id="destination" value.bind="destination">
+        </div>
 
-          <div class="form-group">
-            <label for="weight">Weight</label>
-            <input type="number" class="form-control" id="weight" value.bind="weight" step=".001">
-          </div>
+        <div class="form-group">
+          <label for="weight">Weight</label>
+          <input type="number" class="form-control" id="weight" value.bind="weight" step=".001">
+        </div>
 
-          <div class="form-group">
-            <label for="price">Price</label>
-            <input type="number" class="form-control" id="price" value.bind="price" step=".01">
-          </div>
-        </form>
+        <div class="form-group">
+          <label for="price">Price</label>
+          <input type="number" class="form-control" id="price" value.bind="price" step=".01">
+        </div>
+      </form>
 
-        <button type="submit" form="create-parcel-form"
-                class="card-link btn btn-outline-success align-self-end">
-          Create
-        </button>
-      </div>
+      <button type="submit" form="create-parcel-form"
+              class="card-link btn btn-outline-success align-self-end">
+        Create
+      </button>
     </div>
+  </div>
+
+  <loading if.bind="errorTitle" error.bind="errorTitle" error-title.bind="errorTitle"
+           error-details.bind="errorDetails" not-found.bind="false">
+  </loading>
 
 </template>

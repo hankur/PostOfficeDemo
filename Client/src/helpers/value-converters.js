@@ -26,9 +26,9 @@ export class DateFormatValueConverter {
   }
 }
 
-export class PrintOrQuestionmarkValueConverter {
+export class PrintOrNoneValueConverter {
   toView(value) {
-    return value ? value : "?";
+    return value ? value : "-";
   }
 }
 

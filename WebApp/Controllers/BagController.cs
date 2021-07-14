@@ -73,7 +73,14 @@ namespace WebApp.Controllers
         private async Task ValidateShipment(Shipment shipment, Bag bag)
         {
             if (shipment == null)
+            {
                 ModelState.AddModelError(nameof(BagModel.ShipmentNumber), "Shipment not found");
+            }
+            else
+            {
+                if (shipment.Finalized)
+                    ModelState.AddModelError(nameof(BagModel.ShipmentNumber), "Shipment is already finalized");
+            }
 
             if (await AppBLL.Bags.Find(bag.Number) != null)
                 ModelState.AddModelError(nameof(BagModel.Number),

@@ -58,7 +58,16 @@ namespace WebApp.Controllers
             var bag = await AppBLL.Bags.FindIncluded(parcel.BagNumber);
 
             if (bag == null)
+            {
                 ModelState.AddModelError(nameof(ParcelModel.BagNumber), "Bag not found");
+            }
+            else
+            {
+                var shipment = await AppBLL.Shipments.Find(bag.ShipmentNumber);
+                if (shipment.Finalized)
+                    ModelState.AddModelError(nameof(ParcelModel.BagNumber), "Shipment is already finalized");
+            }
+
             if (await AppBLL.Parcels.Find(parcel.Number) != null)
                 ModelState.AddModelError(nameof(ParcelModel.Number),
                     "Parcel with identical Number already created");

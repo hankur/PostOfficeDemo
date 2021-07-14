@@ -6,6 +6,7 @@ import { ShipmentService } from 'services/shipment-service';
 import { BagService } from 'services/bag-service';
 import { json } from 'aurelia-fetch-client';
 import { IShipment } from 'domain/IShipment';
+import { Utils } from 'helpers/utils';
 
 export var log = LogManager.getLogger('app.bag.index');
 
@@ -22,6 +23,9 @@ export class Index {
   letterWeight: string;
   letterPrice: string;
 
+  errorTitle: string;
+  errorDetails: string;
+
   constructor(
     private shipmentService: ShipmentService,
     private bagService: BagService,
@@ -31,6 +35,9 @@ export class Index {
   }
 
   loadShipments() {
+    this.errorTitle = undefined;
+    this.errorDetails = undefined;
+
     this.shipmentService.getAllShipments().then(result => {
       this.shipments = result;
 
@@ -41,7 +48,12 @@ export class Index {
         shipment.flightDate = new Date(shipment.flightDate + "Z");
       });
     }).catch(error => {
-      console.error(error);
+      Utils.getErrors(error).then(errors => {
+        console.log(errors);
+
+        this.errorTitle = Object.keys(errors)[0];
+        this.errorDetails = Object.values(errors)[0][0] as string;
+      });
     });
   }
 
@@ -56,7 +68,7 @@ export class Index {
   }
 
   submitLetterBag() {
-    let bag: ILetterBag = {
+    let bag = {
       number: this.letterNumber,
       shipmentNumber: this.letterShipmentNumber,
       letterCount: parseInt(this.letterCount),
@@ -69,10 +81,20 @@ export class Index {
   }
 
   submitBag(bag: any) {
+    this.errorTitle = undefined;
+    this.errorDetails = undefined;
+
     console.log(json(bag));
 
     this.bagService.createBag(bag).then(() => {
       this.router.navigateToRoute('home');
-    }).catch(error => console.error(error));
+    }).catch(error => {
+      Utils.getErrors(error).then(errors => {
+        console.log(errors);
+
+        this.errorTitle = Object.keys(errors)[0];
+        this.errorDetails = Object.values(errors)[0][0] as string;
+      });
+    });
   }
 }
