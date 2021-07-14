@@ -9,7 +9,7 @@
         <div class="form-group">
           <label for="number">Shipment number</label>
           <input type="text" class="form-control" id="number" value.bind="number"
-                 placeholder="XXX-XXXXXX">
+                 placeholder="XXX-XXXXXX" pattern="^[a-zA-Z0-9]{3}-[a-zA-Z0-9]{6}$">
         </div>
 
         <div class="form-group">
@@ -26,7 +26,7 @@
         <div class="form-group">
           <label for="flight-number">Flight number</label>
           <input type="text" class="form-control" id="flight-number" value.bind="flightNumber"
-                 placeholder="LLNNNN">
+                 placeholder="LLNNNN" pattern="^[a-zA-Z]{2}[0-9]{4}$">
         </div>
 
         <div class="form-group">
