@@ -11,7 +11,7 @@ namespace Core.BLL.Services
             ServiceRepository = uow.Parcels;
         }
 
-        public Parcel Add(Parcel parcel, Bag bag)
+        public static Parcel Add(Parcel parcel, Bag bag)
         {
             bag.Parcels.Add(parcel);
             return parcel;
@@ -20,7 +20,7 @@ namespace Core.BLL.Services
         public async Task<Parcel> Update(Parcel parcelModel)
         {
             var parcel = await Find(parcelModel.Number);
-            
+
             parcel.BagNumber = parcelModel.BagNumber;
             parcel.Destination = parcelModel.Destination;
             parcel.Recipient = parcelModel.Recipient;

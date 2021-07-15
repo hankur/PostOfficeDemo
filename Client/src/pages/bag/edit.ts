@@ -7,7 +7,7 @@ import { ShipmentService } from 'services/shipment-service';
 import { BagService } from 'services/bag-service';
 import { json } from 'aurelia-fetch-client';
 import { IShipment } from 'domain/IShipment';
-import { Utils } from 'helpers/utils';
+import { Utils } from 'helpers/Utils';
 
 export var log = LogManager.getLogger('app.bag.edit');
 

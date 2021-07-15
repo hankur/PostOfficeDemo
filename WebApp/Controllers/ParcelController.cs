@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Core.BLL;
+using Core.BLL.Services;
 using Core.Domain;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -10,7 +11,7 @@ using WebApp.Models;
 namespace WebApp.Controllers
 {
     /// <summary>
-    /// Controller for parcel-related endpoints
+    ///     Controller for parcel-related endpoints
     /// </summary>
     [ApiController]
     [Route("api/v1/[controller]")]
@@ -35,8 +36,8 @@ namespace WebApp.Controllers
             var parcel = await AppBLL.Parcels.Find(number);
             if (parcel != null)
                 return Ok(parcel);
-            
-            ModelState.AddModelError(nameof(ParcelModel.Number), 
+
+            ModelState.AddModelError(nameof(ParcelModel.Number),
                 "Parcel with specified number does not exist");
             return BadRequest(ModelState);
         }
@@ -95,10 +96,35 @@ namespace WebApp.Controllers
             return Ok(parcel);
         }
 
+        /// <summary>Delete the parcel</summary>
+        /// <param name="number">Parcel number</param>
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [HttpDelete("Number/{number}")]
+        public async Task<ActionResult> Delete(string number)
+        {
+            var parcel = await AppBLL.Parcels.Find(number);
+            if (parcel == null)
+            {
+                ModelState.AddModelError(nameof(ParcelModel.Number), "Parcel not found");
+                return BadRequest(ModelState);
+            }
+
+            var bag = await AppBLL.Bags.Find(parcel.BagNumber);
+            await ValidateBagAndShipment(bag);
+
+            if (ModelState.ErrorCount > 0)
+                return BadRequest(ModelState);
+
+            AppBLL.Parcels.Remove(parcel);
+            await AppBLL.SaveChangesAsync();
+            return NoContent();
+        }
+
         private async Task<Parcel> ValidateAndUpdate(ParcelModel parcelModel)
         {
             var bag = await AppBLL.Bags.Find(parcelModel.BagNumber);
-            
+
             ValidateParcelModel(parcelModel);
             await ValidateBagAndShipment(bag);
 
@@ -114,7 +140,7 @@ namespace WebApp.Controllers
         private async Task<Parcel> ValidateAndCreate(ParcelModel parcelModel)
         {
             var bag = await AppBLL.Bags.FindIncluded(parcelModel.BagNumber);
-            
+
             ValidateParcelModel(parcelModel);
             await ValidateBagAndShipment(bag);
 
@@ -125,7 +151,7 @@ namespace WebApp.Controllers
             if (bag == null || ModelState.ErrorCount > 0)
                 return null;
 
-            return AppBLL.Parcels.Add(ParcelMapper.MapToDomain(parcelModel), bag);
+            return ParcelService.Add(ParcelMapper.MapToDomain(parcelModel), bag);
         }
 
         private void ValidateParcelModel(ParcelModel parcelModel)
@@ -139,12 +165,15 @@ namespace WebApp.Controllers
         private async Task ValidateBagAndShipment(Bag bag)
         {
             if (bag == null)
+            {
                 ModelState.AddModelError(nameof(ParcelModel.BagNumber), "Bag not found");
+            }
             else
             {
                 var shipment = await AppBLL.Shipments.Find(bag.ShipmentNumber);
                 if (shipment.Finalized)
-                    ModelState.AddModelError(nameof(ParcelModel.BagNumber), "Shipment is already finalized");
+                    ModelState.AddModelError(nameof(ParcelModel.BagNumber),
+                        "Shipment is already finalized");
             }
         }
     }

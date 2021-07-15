@@ -14,6 +14,7 @@
           <th>Finalized</th>
           <th>Edit?</th>
           <th>Finalize?</th>
+          <th>Delete?</th>
         </tr>
       </thead>
 
@@ -28,13 +29,17 @@
                     if.bind="!shipment.finalized">Edit</button></td>
           <td><button type="button" class="btn btn-success" click.trigger="finalize(shipment)"
                     if.bind="!shipment.finalized">Finalize</button></td>
+          <td><button type="button" class="btn btn-danger" click.trigger="deleteShipment(shipment)"
+                    if.bind="!shipment.finalized">Delete</button></td>
         </tr>
 
         <tr class="bag-list-row hover">
-          <td colspan="6" class="p-0">
+          <td colspan="8" class="p-0">
             <div class="collapse px-5" data-bs-parent="#accordion"
                  data-bag-list.bind="shipment.number">
-              <bag-list finalized.bind="shipment.finalized" bags.bind="shipment.bags"></bag-list>
+              <bag-list finalized.bind="shipment.finalized" bags.bind="shipment.bags"
+                        error-title.two-way="errorTitle" error-details.two-way="errorDetails">
+              </bag-list>
             </div>
           </td>
         </tr>

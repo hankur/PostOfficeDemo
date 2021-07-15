@@ -1,11 +1,11 @@
-import { IParcel } from '../../domain/IParcel';
+import { IParcel } from 'domain/IParcel';
 import { IBag } from 'domain/IBag';
 import { Router } from 'aurelia-router';
 import { LogManager, autoinject } from "aurelia-framework";
 import { ParcelService } from 'services/parcel-service';
 import { BagService } from 'services/bag-service';
 import { json } from 'aurelia-fetch-client';
-import { Utils } from 'helpers/utils';
+import { Utils } from 'helpers/Utils';
 
 export var log = LogManager.getLogger('app.parcel.edit');
 

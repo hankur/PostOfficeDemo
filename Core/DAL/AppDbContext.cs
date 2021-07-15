@@ -16,7 +16,7 @@ namespace Core.DAL
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
-            
+
             const int precision = 18;
             const int weightScale = 3;
             const int priceScale = 2;

@@ -8,7 +8,7 @@ namespace Core.BLL.Services
     public class ShipmentService : BaseService<Shipment>
     {
         protected new readonly ShipmentRepository ServiceRepository;
-        
+
         public ShipmentService(UnitOfWork uow) : base(uow.Shipments)
         {
             ServiceRepository = uow.Shipments;
@@ -30,10 +30,16 @@ namespace Core.BLL.Services
             return await ServiceRepository.FindIncluded(number);
         }
 
-        public async Task Finalize(string number)
+        public static Shipment Finalize(Shipment shipment)
         {
-            var shipment = await Find(number);
             shipment.Finalized = true;
+            return shipment;
+        }
+
+        public new async Task Remove(string number)
+        {
+            var shipment = await FindIncluded(number);
+            base.Remove(shipment);
         }
     }
 }

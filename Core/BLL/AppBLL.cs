@@ -7,8 +7,8 @@ namespace Core.BLL
 {
     public class AppBLL
     {
-        protected readonly UnitOfWork UnitOfWork;
         protected readonly ServiceProvider ServiceProvider;
+        protected readonly UnitOfWork UnitOfWork;
 
         public AppBLL(UnitOfWork unitOfWork, ServiceProvider serviceProvider)
         {
@@ -16,13 +16,13 @@ namespace Core.BLL
             ServiceProvider = serviceProvider;
         }
 
-        public virtual async Task<int> SaveChangesAsync()
-        {
-            return await UnitOfWork.SaveChangesAsync();
-        }
-
         public ShipmentService Shipments => ServiceProvider.GetService<ShipmentService>();
         public BagService Bags => ServiceProvider.GetService<BagService>();
         public ParcelService Parcels => ServiceProvider.GetService<ParcelService>();
+
+        public async Task<int> SaveChangesAsync()
+        {
+            return await UnitOfWork.SaveChangesAsync();
+        }
     }
 }

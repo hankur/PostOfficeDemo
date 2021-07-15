@@ -11,6 +11,7 @@
         <th class="text-end">Weight</th>
         <th class="text-end">Price</th>
         <th if.bind="!finalized">Edit?</th>
+        <th if.bind="!finalized">Delete?</th>
       </tr>
     </thead>
 
@@ -26,13 +27,20 @@
             Edit
           </button>
         </td>
+        <td if.bind="!finalized">
+          <button type="button" class="btn btn-danger" click.trigger="deleteBag(bag)">
+            Delete
+          </button>
+        </td>
       </tr>
 
       <tr class="parcel-list-row hover" data-bag.bind="bag.number">
         <td colspan="7" class="p-0">
           <div class="collapse px-5" data-parcel-list.bind="bag.number"
                data-bs-parent="#accordion-bags">
-            <parcel-list finalized.bind="finalized" parcels.bind="bag.parcels"></parcel-list>
+            <parcel-list finalized.bind="finalized" parcels.bind="bag.parcels"
+                         error-title.two-way="errorTitle" error-details.two-way="errorDetails">
+            </parcel-list>
           </div>
         </td>
       </tr>

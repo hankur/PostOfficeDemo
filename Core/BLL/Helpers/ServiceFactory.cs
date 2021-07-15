@@ -28,7 +28,8 @@ namespace Core.BLL.Helpers
         }
 
 
-        public virtual void AddToCreationMethods<TService>(Func<UnitOfWork, TService> creationMethod)
+        public virtual void AddToCreationMethods<TService>(
+            Func<UnitOfWork, TService> creationMethod)
             where TService : class
         {
             _serviceCreationMethodCache.Add(typeof(TService), creationMethod);

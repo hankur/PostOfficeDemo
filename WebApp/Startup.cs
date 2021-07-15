@@ -14,19 +14,21 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Net.Http.Headers;
 using Microsoft.OpenApi.Models;
 using ServiceProvider = Core.BLL.Helpers.ServiceProvider;
+
 #pragma warning disable 1591
 
 namespace WebApp
 {
     public class Startup
     {
+        private const string CorsPolicy = "CorsAllowAll";
+
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
         }
 
         public IConfiguration Configuration { get; }
-        private const string CorsPolicy = "CorsAllowAll";
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
@@ -40,7 +42,7 @@ namespace WebApp
             services.AddSingleton<RepositoryFactory>();
             services.AddScoped<RepositoryProvider>();
             services.AddScoped<UnitOfWork>();
-            
+
             services.AddSingleton<ServiceFactory>();
             services.AddScoped<ServiceProvider>();
             services.AddScoped<AppBLL>();
@@ -66,10 +68,10 @@ namespace WebApp
             {
                 c.SwaggerDoc("v1", new OpenApiInfo
                 {
-                    Title = "PostOffice API", Version = "v1", 
+                    Title = "PostOffice API", Version = "v1",
                     Description = "Source code: https://github.com/hankur/PostOfficeDemo"
                 });
-                
+
                 // include xml comments (enable creation in csproj file)
                 var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
                 var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
@@ -82,7 +84,8 @@ namespace WebApp
         {
             // Auto-generate database tables
             // (c) https://stackoverflow.com/a/42356110
-            using (var serviceScope = app.ApplicationServices.GetService<IServiceScopeFactory>()?.CreateScope())
+            using (var serviceScope = app.ApplicationServices.GetService<IServiceScopeFactory>()
+                ?.CreateScope())
             {
                 var context = serviceScope?.ServiceProvider.GetRequiredService<AppDbContext>();
                 context?.Database.EnsureCreated();
@@ -100,7 +103,7 @@ namespace WebApp
             app.UseRouting();
 
             app.UseCors(CorsPolicy);
-            
+
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints => { endpoints.MapControllers(); });

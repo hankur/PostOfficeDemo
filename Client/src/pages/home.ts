@@ -1,5 +1,7 @@
-import { Utils } from 'helpers/utils';
-import { IParcelBag } from './../domain/IParcelBag';
+import { PostOfficeEvent } from './../helpers/PostOfficeEvent';
+import { EventAggregator } from 'aurelia-event-aggregator';
+import { Utils } from 'helpers/Utils';
+import { IParcelBag } from 'domain/IParcelBag';
 import { IShipment } from 'domain/IShipment';
 import { LogManager, autoinject } from "aurelia-framework";
 import { Router } from 'aurelia-router';
@@ -19,9 +21,12 @@ export class Home {
 
   constructor(
     private shipmentService: ShipmentService,
-    private router: Router
+    private router: Router,
+    private eventAggregator: EventAggregator
   ) {
     this.loadShipments();
+
+    this.eventAggregator.subscribe(PostOfficeEvent.ReloadHome, () => this.loadShipments());
   }
 
   loadShipments() {
@@ -62,6 +67,21 @@ export class Home {
     this.shipmentService.finalize(shipment.number)
       .then(_ => this.loadShipments())
       .catch(error => {
+        Utils.getErrors(error).then(errors => {
+          console.log(errors);
+
+          this.errorTitle = Object.keys(errors)[0];
+          this.errorDetails = Object.values(errors)[0][0] as string;
+        });
+      });;
+  }
+
+  deleteShipment(shipment: IShipment) {
+    this.shipmentService.delete(shipment.number)
+      .then(_ => this.loadShipments())
+      .catch(error => {
+        console.log(error);
+
         Utils.getErrors(error).then(errors => {
           console.log(errors);
 

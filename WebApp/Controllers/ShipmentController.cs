@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Core.BLL;
+using Core.BLL.Services;
 using Core.Domain;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -11,7 +13,7 @@ using WebApp.Models;
 namespace WebApp.Controllers
 {
     /// <summary>
-    /// Controller for shipment-related endpoints
+    ///     Controller for shipment-related endpoints
     /// </summary>
     [ApiController]
     [Route("api/v1/[controller]")]
@@ -24,7 +26,7 @@ namespace WebApp.Controllers
         }
 
         private AppBLL AppBLL { get; }
-        
+
         /// <summary>Get the shipment (without included bags) by specified number</summary>
         /// <param name="number">Shipment number</param>
         /// <returns>Shipment</returns>
@@ -33,11 +35,11 @@ namespace WebApp.Controllers
         [HttpGet("Number/{number}")]
         public async Task<ActionResult<Shipment>> GetShipment(string number)
         {
-            var shipment = await AppBLL.Shipments.Find(number);
+            var shipment = await AppBLL.Shipments.FindIncluded(number);
             if (shipment != null)
                 return Ok(shipment);
-            
-            ModelState.AddModelError(nameof(ShipmentModel.Number), 
+
+            ModelState.AddModelError(nameof(ShipmentModel.Number),
                 "Shipment with specified number does not exist");
             return BadRequest(ModelState);
         }
@@ -50,7 +52,7 @@ namespace WebApp.Controllers
         {
             return Ok(await AppBLL.Shipments.All());
         }
-        
+
         /// <summary>Create a new shipment</summary>
         /// <returns>A newly created shipment</returns>
         /// <param name="shipmentModel">Shipment model</param>
@@ -116,17 +118,35 @@ namespace WebApp.Controllers
             var shipment = await ValidateAndFinalize(number);
             if (shipment == null)
                 return BadRequest(ModelState);
-            
+
             await AppBLL.SaveChangesAsync();
             return Ok(shipment);
         }
-        
+
+        /// <summary>Delete the shipment with bags and parcels</summary>
+        /// <param name="number">Shipment number</param>
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [HttpDelete("Number/{number}")]
+        public async Task<ActionResult> Delete(string number)
+        {
+            if (!await AppBLL.Shipments.Exists(number))
+            {
+                ModelState.AddModelError(nameof(ShipmentModel.Number), "Shipment not found");
+                return BadRequest(ModelState);
+            }
+
+            await AppBLL.Shipments.Remove(number);
+            await AppBLL.SaveChangesAsync();
+            return NoContent();
+        }
+
         private async Task<Shipment> ValidateAndCreate(ShipmentModel shipmentModel)
         {
             var shipment = ShipmentMapper.MapToDomain(shipmentModel);
-            
+
             ValidateShipment(shipment);
-            
+
             if (await AppBLL.Shipments.Exists(shipment.Number))
                 ModelState.AddModelError(nameof(ShipmentModel.Number),
                     "Shipment with identical Number already created");
@@ -136,13 +156,13 @@ namespace WebApp.Controllers
 
             return await AppBLL.Shipments.Add(shipment);
         }
-        
+
         private async Task<Shipment> ValidateAndUpdate(ShipmentModel shipmentModel)
         {
             var shipment = ShipmentMapper.MapToDomain(shipmentModel);
-            
+
             ValidateShipment(shipment);
-            
+
             if (!await AppBLL.Shipments.Exists(shipment.Number))
                 ModelState.AddModelError(nameof(ShipmentModel.Number), "Shipment not found");
 
@@ -167,24 +187,25 @@ namespace WebApp.Controllers
                 ModelState.AddModelError(nameof(Shipment.Bags), "Shipment is missing bags");
 
             foreach (var bag in shipment.Bags)
-            {
                 if (bag.Type == BagType.Parcels && bag.Parcels.Count == 0)
                     ModelState.AddModelError(nameof(Shipment.Bags),
                         $"Bag numbered '{bag.Number}' is missing parcels");
-            }
-            
+
             if (ModelState.ErrorCount > 0)
                 return null;
 
-            shipment.Finalized = true;
-            return shipment;
+            return ShipmentService.Finalize(shipment);
         }
 
         private void ValidateShipment(Shipment shipment)
         {
             if (shipment.FlightDate < DateTime.Now)
-                ModelState.AddModelError(nameof(ShipmentModel.FlightDate), 
+                ModelState.AddModelError(nameof(ShipmentModel.FlightDate),
                     "Flight date cannot be in the past");
+
+            if (!Enum.GetNames(typeof(Airport)).Contains(shipment.Airport))
+                ModelState.AddModelError(nameof(ShipmentModel.Airport),
+                    "Unknown Airport type");
         }
     }
 }

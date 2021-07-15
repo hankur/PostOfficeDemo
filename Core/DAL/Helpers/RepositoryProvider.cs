@@ -7,11 +7,11 @@ namespace Core.DAL.Helpers
 {
     public class RepositoryProvider
     {
+        protected readonly AppDbContext DataContext;
         protected readonly Dictionary<Type, object> RepositoryCache;
         protected readonly RepositoryFactory RepositoryFactory;
-        protected readonly AppDbContext DataContext;
 
-        public RepositoryProvider(RepositoryFactory repositoryFactory, 
+        public RepositoryProvider(RepositoryFactory repositoryFactory,
             AppDbContext dataContext) :
             this(new Dictionary<Type, object>(), repositoryFactory, dataContext)
         {
@@ -25,7 +25,7 @@ namespace Core.DAL.Helpers
             DataContext = dataContext;
         }
 
-        public virtual TRepository GetRepository<TRepository>()
+        public TRepository GetRepository<TRepository>()
         {
             if (RepositoryCache.ContainsKey(typeof(TRepository)))
                 return (TRepository) RepositoryCache[typeof(TRepository)];
@@ -36,12 +36,13 @@ namespace Core.DAL.Helpers
             RepositoryCache[typeof(TRepository)] = repo;
             return (TRepository) repo;
         }
-        
-        public virtual BaseRepository<TDomainEntity> GetEntityRepository<TDomainEntity>()
+
+        public BaseRepository<TDomainEntity> GetEntityRepository<TDomainEntity>()
             where TDomainEntity : class, IEntity, new()
         {
             if (RepositoryCache.ContainsKey(typeof(BaseRepository<TDomainEntity>)))
-                return (BaseRepository<TDomainEntity>) RepositoryCache[typeof(BaseRepository<TDomainEntity>)];
+                return (BaseRepository<TDomainEntity>) 
+                    RepositoryCache[typeof(BaseRepository<TDomainEntity>)];
 
             var repoCreationMethod = RepositoryFactory.GetEntityRepositoryFactory<TDomainEntity>();
             var repo = repoCreationMethod(DataContext);

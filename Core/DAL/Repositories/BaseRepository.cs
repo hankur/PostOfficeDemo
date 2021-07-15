@@ -22,9 +22,9 @@ namespace Core.DAL.Repositories
             return await RepositoryDbSet.ToListAsync();
         }
 
-        public virtual async Task<TDomainEntity> Find(object id)
+        public virtual async Task<TDomainEntity> Find(string number)
         {
-            return await RepositoryDbSet.FindAsync(id);
+            return await RepositoryDbSet.FindAsync(number);
         }
 
         public virtual async Task<bool> Exists(string number)
@@ -42,9 +42,10 @@ namespace Core.DAL.Repositories
             RepositoryDbSet.Remove(entity);
         }
 
-        public virtual void Remove(params object[] id)
+        public virtual void Remove(string number)
+        
         {
-            RepositoryDbSet.Remove(RepositoryDbSet.Find(id));
+            Remove(RepositoryDbSet.Find(number));
         }
     }
 }

@@ -14,7 +14,7 @@ namespace Core.BLL.Services
         {
             ServiceRepository = serviceRepository;
         }
-        
+
         public virtual async Task<List<TDomainEntity>> All()
         {
             return await ServiceRepository.All();
@@ -33,6 +33,11 @@ namespace Core.BLL.Services
         public virtual async Task<TDomainEntity> Add(TDomainEntity entity)
         {
             return await ServiceRepository.Add(entity);
+        }
+
+        public virtual void Remove(TDomainEntity entity)
+        {
+            ServiceRepository.Remove(entity);
         }
 
         public virtual void Remove(string number)

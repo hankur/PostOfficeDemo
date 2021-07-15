@@ -4,12 +4,12 @@ using WebApp.Models;
 namespace WebApp.Mappers
 {
     /// <summary>
-    /// Mapper to convert between ParcelModels and Parcels
+    ///     Mapper to convert between ParcelModels and Parcels
     /// </summary>
     public static class ParcelMapper
     {
         /// <summary>
-        /// Convert from ParcelModel to Parcel
+        ///     Convert from ParcelModel to Parcel
         /// </summary>
         public static Parcel MapToDomain(ParcelModel model)
         {

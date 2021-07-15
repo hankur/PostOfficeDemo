@@ -1,9 +1,9 @@
-import { IShipment } from './../../domain/IShipment';
+import { IShipment } from 'domain/IShipment';
 import { Router } from 'aurelia-router';
 import { LogManager, autoinject } from "aurelia-framework";
 import { ShipmentService } from 'services/shipment-service';
 import { json } from 'aurelia-fetch-client';
-import { Utils } from 'helpers/utils';
+import { Utils } from 'helpers/Utils';
 
 export var log = LogManager.getLogger('app.shipment.edit');
 

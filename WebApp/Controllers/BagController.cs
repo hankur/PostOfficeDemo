@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Core.BLL;
+using Core.BLL.Services;
 using Core.Domain;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -11,7 +12,7 @@ using WebApp.Models;
 namespace WebApp.Controllers
 {
     /// <summary>
-    /// Controller for bag-related endpoints
+    ///     Controller for bag-related endpoints
     /// </summary>
     [ApiController]
     [Route("api/v1/[controller]")]
@@ -45,8 +46,8 @@ namespace WebApp.Controllers
             var bag = await AppBLL.Bags.Find(number);
             if (bag != null)
                 return Ok(bag);
-            
-            ModelState.AddModelError(nameof(BagModel.Number), 
+
+            ModelState.AddModelError(nameof(BagModel.Number),
                 "Bag with specified number does not exist");
             return BadRequest(ModelState);
         }
@@ -105,10 +106,35 @@ namespace WebApp.Controllers
             return Ok(bag);
         }
 
+        /// <summary>Delete the bag with parcels</summary>
+        /// <param name="number">Bag number</param>
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [HttpDelete("Number/{number}")]
+        public async Task<ActionResult> Delete(string number)
+        {
+            var bag = await AppBLL.Bags.FindIncluded(number);
+            if (bag == null)
+            {
+                ModelState.AddModelError(nameof(BagModel.Number), "Bag not found");
+                return BadRequest(ModelState);
+            }
+
+            var shipment = await AppBLL.Shipments.Find(bag.ShipmentNumber);
+            ValidateShipment(shipment);
+
+            if (ModelState.ErrorCount > 0)
+                return BadRequest(ModelState);
+
+            AppBLL.Bags.Remove(bag);
+            await AppBLL.SaveChangesAsync();
+            return NoContent();
+        }
+
         private async Task<Bag> ValidateAndUpdate(BagModel bagModel)
         {
             var shipment = await AppBLL.Shipments.Find(bagModel.ShipmentNumber);
-            
+
             ValidateBagModel(bagModel);
             ValidateShipment(shipment);
 
@@ -117,7 +143,7 @@ namespace WebApp.Controllers
 
             if (ModelState.ErrorCount > 0)
                 return null;
-            
+
             return await AppBLL.Bags.Update(BagMapper.MapToDomain(bagModel));
         }
 
@@ -127,7 +153,7 @@ namespace WebApp.Controllers
 
             ValidateBagModel(bagModel);
             ValidateShipment(shipment);
-            
+
             if (await AppBLL.Bags.Exists(bagModel.Number))
                 ModelState.AddModelError(nameof(BagModel.Number),
                     "Bag with identical Number already created");
@@ -135,16 +161,16 @@ namespace WebApp.Controllers
             if (ModelState.ErrorCount > 0)
                 return null;
 
-            return AppBLL.Bags.Add(BagMapper.MapToDomain(bagModel), shipment);
+            return BagService.Add(BagMapper.MapToDomain(bagModel), shipment);
         }
 
         private void ValidateShipment(Shipment shipment)
         {
             if (shipment == null)
                 ModelState.AddModelError(nameof(BagModel.ShipmentNumber), "Shipment not found");
-            else
-                if (shipment.Finalized)
-                    ModelState.AddModelError(nameof(BagModel.ShipmentNumber), "Shipment is already finalized");
+            else if (shipment.Finalized)
+                ModelState.AddModelError(nameof(BagModel.ShipmentNumber),
+                    "Shipment is already finalized");
         }
 
         private void ValidateBagModel(BagModel bag)
@@ -162,10 +188,10 @@ namespace WebApp.Controllers
                     ModelState.AddModelError(nameof(BagModel.Type), "This type does not exist");
                     return;
             }
-            
+
             var errorMessage = bag.Type == BagType.Letters
-                 ? $"Value cannot be NULL for BagType.{nameof(BagType.Letters)} (Bag number {bag.Number})"
-                 : $"Value must be NULL for BagType.{nameof(BagType.Letters)} (Bag number {bag.Number})";
+                ? $"Value cannot be NULL for BagType.{nameof(BagType.Letters)} (Bag number {bag.Number})"
+                : $"Value must be NULL for BagType.{nameof(BagType.Letters)} (Bag number {bag.Number})";
 
             if (!isValid(bag.LetterCount))
                 ModelState.AddModelError(nameof(BagModel.LetterCount), errorMessage);

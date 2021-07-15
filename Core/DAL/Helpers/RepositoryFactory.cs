@@ -7,16 +7,18 @@ namespace Core.DAL.Helpers
 {
     public class RepositoryFactory
     {
-        private readonly Dictionary<Type, Func<AppDbContext, object>> _repositoryCreationMethodCache;
+        private readonly Dictionary<Type, Func<AppDbContext, object>>
+            _repositoryCreationMethodCache;
 
         public RepositoryFactory() : this(new Dictionary<Type, Func<AppDbContext, object>>())
         {
         }
 
-        public RepositoryFactory(Dictionary<Type, Func<AppDbContext, object>> repositoryCreationMethods)
+        public RepositoryFactory(
+            Dictionary<Type, Func<AppDbContext, object>> repositoryCreationMethods)
         {
             _repositoryCreationMethodCache = repositoryCreationMethods;
-            
+
             RegisterRepositories();
         }
 
@@ -27,7 +29,8 @@ namespace Core.DAL.Helpers
             AddToCreationMethods(dataContext => new ShipmentRepository(dataContext));
         }
 
-        public void AddToCreationMethods<TRepository>(Func<AppDbContext, TRepository> creationMethod)
+        public void AddToCreationMethods<TRepository>(
+            Func<AppDbContext, TRepository> creationMethod)
             where TRepository : class
         {
             _repositoryCreationMethodCache.Add(typeof(TRepository), creationMethod);
@@ -37,11 +40,9 @@ namespace Core.DAL.Helpers
         public Func<AppDbContext, object> GetRepositoryFactory<TRepository>()
         {
             if (_repositoryCreationMethodCache.ContainsKey(typeof(TRepository)))
-            {
                 return _repositoryCreationMethodCache[typeof(TRepository)];
-            }
 
-            throw new NullReferenceException("No repo creation method found for " 
+            throw new NullReferenceException("No repo creation method found for "
                                              + typeof(TRepository).FullName);
         }
 
@@ -51,5 +52,4 @@ namespace Core.DAL.Helpers
             return dataContext => new BaseRepository<TDomainEntity>(dataContext);
         }
     }
-
 }

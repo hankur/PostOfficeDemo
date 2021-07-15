@@ -10,6 +10,7 @@
         <th class="text-end">Weight</th>
         <th class="text-end">Price</th>
         <th if.bind="!finalized">Edit?</th>
+        <th if.bind="!finalized">Delete?</th>
       </tr>
     </thead>
 
@@ -25,6 +26,10 @@
             Edit
           </button>
         </td>
+        <td if.bind="!finalized">
+          <button type="button" class="btn btn-danger" click.trigger="deleteParcel(parcel)">
+            Delete
+          </button>
         </td>
       </tr>
     </tbody>
