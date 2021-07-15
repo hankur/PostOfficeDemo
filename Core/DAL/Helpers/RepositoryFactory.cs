@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Core.DAL.Repositories;
+using Core.Domain;
 
 namespace Core.DAL.Helpers
 {
@@ -45,7 +46,7 @@ namespace Core.DAL.Helpers
         }
 
         public Func<AppDbContext, object> GetEntityRepositoryFactory<TDomainEntity>()
-            where TDomainEntity : class, new()
+            where TDomainEntity : class, IEntity, new()
         {
             return dataContext => new BaseRepository<TDomainEntity>(dataContext);
         }

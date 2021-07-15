@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 
 namespace Core.Domain
 {
-    public class Parcel
+    public class Parcel : IEntity
     {
         [Key]
         [Required]
@@ -26,7 +26,6 @@ namespace Core.Domain
         [Range(0, (double) decimal.MaxValue)]
         public decimal Price { get; set; }
 
-        [JsonIgnore]
         public string BagNumber { get; set; }
         [JsonIgnore]
         public Bag Bag { get; set; }

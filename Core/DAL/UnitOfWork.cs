@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Core.DAL.Helpers;
 using Core.DAL.Repositories;
+using Core.Domain;
 
 namespace Core.DAL
 {
@@ -23,7 +24,7 @@ namespace Core.DAL
         }
 
         public BaseRepository<TDomainEntity> BaseRepository<TDomainEntity>()
-            where TDomainEntity : class, new()
+            where TDomainEntity : class, IEntity, new()
         {
             return RepositoryProvider.GetEntityRepository<TDomainEntity>();
         }

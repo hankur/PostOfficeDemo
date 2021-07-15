@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Core.DAL.Repositories;
+using Core.Domain;
 
 namespace Core.DAL.Helpers
 {
@@ -37,7 +38,7 @@ namespace Core.DAL.Helpers
         }
         
         public virtual BaseRepository<TDomainEntity> GetEntityRepository<TDomainEntity>()
-            where TDomainEntity : class, new()
+            where TDomainEntity : class, IEntity, new()
         {
             if (RepositoryCache.ContainsKey(typeof(BaseRepository<TDomainEntity>)))
                 return (BaseRepository<TDomainEntity>) RepositoryCache[typeof(BaseRepository<TDomainEntity>)];

@@ -20,14 +20,23 @@ export class MainRouter {
       },
 
       {
-        route: 'shipment/index', name: 'shipmentIndex', title: "Shipments",
+        route: 'shipment', name: 'shipmentIndex', title: "Shipments",
         moduleId: PLATFORM.moduleName('pages/shipment/index')
       }, {
-        route: 'bag/index', name: 'bagIndex', title: "Bags",
+        route: 'shipment/:number?', name: 'shipmentEdit', title: "Shipments",
+        moduleId: PLATFORM.moduleName('pages/shipment/edit')
+      }, {
+        route: 'bag', name: 'bagIndex', title: "Bags",
         moduleId: PLATFORM.moduleName('pages/bag/index')
       }, {
-        route: 'parcel/index', name: 'parcelIndex', title: "Parcels",
+        route: 'bag/:number?', name: 'bagEdit', title: "Bags",
+        moduleId: PLATFORM.moduleName('pages/bag/edit')
+      }, {
+        route: 'parcel', name: 'parcelIndex', title: "Parcels",
         moduleId: PLATFORM.moduleName('pages/parcel/index')
+      }, {
+        route: 'parcel/:number?', name: 'parcelEdit', title: "Parcels",
+        moduleId: PLATFORM.moduleName('pages/parcel/edit')
       },
     ]);
   }

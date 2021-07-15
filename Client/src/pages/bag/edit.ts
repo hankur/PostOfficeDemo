@@ -1,3 +1,4 @@
+import { ILetterBag } from '../../domain/ILetterBag';
 import { BagType } from 'domain/enums/BagType';
 import { Router } from 'aurelia-router';
 import { LogManager, autoinject } from "aurelia-framework";
@@ -7,10 +8,10 @@ import { json } from 'aurelia-fetch-client';
 import { IShipment } from 'domain/IShipment';
 import { Utils } from 'helpers/utils';
 
-export var log = LogManager.getLogger('app.bag.index');
+export var log = LogManager.getLogger('app.bag.edit');
 
 @autoinject
-export class Index {
+export class Edit {
   shipments: IShipment[] | undefined;
 
   parcelNumber: string;
@@ -31,6 +32,13 @@ export class Index {
     private router: Router
   ) {
     this.loadShipments();
+  }
+
+  activate(parameters: { number: string; }) {
+    if (!parameters.number)
+      return;
+
+    this.populateInputFields(parameters.number);
   }
 
   loadShipments() {
@@ -85,7 +93,7 @@ export class Index {
 
     console.log(json(bag));
 
-    this.bagService.createBag(bag).then(() => {
+    this.bagService.updateBag(bag).then(_ => {
       this.router.navigateToRoute('home');
     }).catch(error => {
       Utils.getErrors(error).then(errors => {
@@ -95,5 +103,24 @@ export class Index {
         this.errorDetails = Object.values(errors)[0][0] as string;
       });
     });
+  }
+
+  populateInputFields(number: string) {
+    this.bagService.getBag(number).then(result => {
+      if (this.instanceOfLetterBag(result)) {
+        this.letterNumber = result.number;
+        this.letterShipmentNumber = result.shipmentNumber;
+        this.letterCount = result.letterCount.toString();
+        this.letterWeight = result.weight.toString();
+        this.letterPrice = result.price.toString();
+      } else {
+        this.parcelNumber = result.number;
+        this.parcelShipmentNumber = result.shipmentNumber;
+      }
+    });
+  }
+
+  instanceOfLetterBag(object: any): object is ILetterBag {
+    return 'letterCount' in object && object.letterCount != null;
   }
 }

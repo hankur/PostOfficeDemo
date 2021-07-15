@@ -4,7 +4,7 @@ using Newtonsoft.Json;
 
 namespace Core.Domain
 {
-    public class Bag
+    public class Bag : IEntity
     {
         [Key]
         [Required]
@@ -25,7 +25,6 @@ namespace Core.Domain
 
         public List<Parcel> Parcels { get; set; } = new();
         
-        [JsonIgnore]
         public string ShipmentNumber { get; set; }
         [JsonIgnore]
         public Shipment Shipment { get; set; }

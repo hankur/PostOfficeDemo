@@ -14,6 +14,10 @@ export class ShipmentService extends BaseService {
     super(httpClient, endPoint);
   }
 
+  getShipment(number: string): Promise<IShipment> {
+    return super.fetch(`/Number/${number}`);
+  }
+
   getAllShipments(): Promise<IShipment[]> {
     return super.fetchAll<IShipment>(`/List`);
   }
@@ -24,5 +28,9 @@ export class ShipmentService extends BaseService {
 
   createShipment(shipment: any): Promise<Response> {
     return super.post(shipment);
+  }
+
+  updateShipment(shipment: any): Promise<Response> {
+    return super.put(shipment);
   }
 }

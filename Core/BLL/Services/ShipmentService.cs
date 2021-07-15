@@ -14,6 +14,17 @@ namespace Core.BLL.Services
             ServiceRepository = uow.Shipments;
         }
 
+        public async Task<Shipment> Update(Shipment shipmentModel)
+        {
+            var shipment = await FindIncluded(shipmentModel.Number);
+
+            shipment.Airport = shipmentModel.Airport;
+            shipment.FlightDate = shipmentModel.FlightDate;
+            shipment.FlightNumber = shipmentModel.FlightNumber;
+
+            return shipment;
+        }
+
         public async Task<Shipment> FindIncluded(string number)
         {
             return await ServiceRepository.FindIncluded(number);

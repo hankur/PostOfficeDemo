@@ -57,7 +57,7 @@ namespace WebApp
                             HeaderNames.Authorization,
                             HeaderNames.ContentType,
                             HeaderNames.Origin)
-                        .WithMethods("OPTIONS", "GET", "POST");
+                        .WithMethods("OPTIONS", "GET", "POST", "PUT", "DELETE");
                 });
             });
 

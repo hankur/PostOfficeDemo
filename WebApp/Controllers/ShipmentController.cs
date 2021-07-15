@@ -25,6 +25,23 @@ namespace WebApp.Controllers
 
         private AppBLL AppBLL { get; }
         
+        /// <summary>Get the shipment (without included bags) by specified number</summary>
+        /// <param name="number">Shipment number</param>
+        /// <returns>Shipment</returns>
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [HttpGet("Number/{number}")]
+        public async Task<ActionResult<Shipment>> GetShipment(string number)
+        {
+            var shipment = await AppBLL.Shipments.Find(number);
+            if (shipment != null)
+                return Ok(shipment);
+            
+            ModelState.AddModelError(nameof(ShipmentModel.Number), 
+                "Shipment with specified number does not exist");
+            return BadRequest(ModelState);
+        }
+
         /// <summary>Get all shipments in the system with included bags and parcels</summary>
         /// <returns>List of shipments</returns>
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -73,6 +90,22 @@ namespace WebApp.Controllers
             return Ok(newShipments);
         }
 
+        /// <summary>Update the shipment</summary>
+        /// <returns>Updated shipment</returns>
+        /// <param name="shipmentModel">Shipment model</param>
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [HttpPut]
+        public async Task<ActionResult<Shipment>> UpdateShipment(ShipmentModel shipmentModel)
+        {
+            var shipment = await ValidateAndUpdate(shipmentModel);
+            if (shipment == null)
+                return BadRequest(ModelState);
+
+            await AppBLL.SaveChangesAsync();
+            return Ok(shipment);
+        }
+
         /// <summary>Finalize the shipment so it can't be modified anymore</summary>
         /// <param name="shipmentNumber">Shipment number</param>
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -87,30 +120,57 @@ namespace WebApp.Controllers
             await AppBLL.SaveChangesAsync();
             return Ok(shipment);
         }
+        
+        private async Task<Shipment> ValidateAndCreate(ShipmentModel shipmentModel)
+        {
+            var shipment = ShipmentMapper.MapToDomain(shipmentModel);
+            
+            ValidateShipment(shipment);
+            
+            if (await AppBLL.Shipments.Exists(shipment.Number))
+                ModelState.AddModelError(nameof(ShipmentModel.Number),
+                    "Shipment with identical Number already created");
+
+            if (ModelState.ErrorCount > 0)
+                return null;
+
+            return await AppBLL.Shipments.Add(shipment);
+        }
+        
+        private async Task<Shipment> ValidateAndUpdate(ShipmentModel shipmentModel)
+        {
+            var shipment = ShipmentMapper.MapToDomain(shipmentModel);
+            
+            ValidateShipment(shipment);
+            
+            if (!await AppBLL.Shipments.Exists(shipment.Number))
+                ModelState.AddModelError(nameof(ShipmentModel.Number), "Shipment not found");
+
+            if (ModelState.ErrorCount > 0)
+                return null;
+
+            return await AppBLL.Shipments.Update(shipment);
+        }
 
         private async Task<Shipment> ValidateAndFinalize(string shipmentNumber)
         {
             var shipment = await AppBLL.Shipments.FindIncluded(shipmentNumber);
-
             if (shipment == null)
             {
                 ModelState.AddModelError(nameof(ShipmentModel.Number), "Shipment not found");
                 return null;
             }
 
-            if (shipment.FlightDate < DateTime.Now)
-                ModelState.AddModelError(nameof(ShipmentModel.FlightDate), 
-                    "Flight date cannot be in the past");
+            ValidateShipment(shipment);
 
             if (shipment.Bags.Count == 0)
-                ModelState.AddModelError(nameof(Shipment.Bags),
-                    "Shipment is missing bags");
+                ModelState.AddModelError(nameof(Shipment.Bags), "Shipment is missing bags");
 
             foreach (var bag in shipment.Bags)
             {
                 if (bag.Type == BagType.Parcels && bag.Parcels.Count == 0)
                     ModelState.AddModelError(nameof(Shipment.Bags),
-                        $"Bag number '{bag.Number}' is missing parcels");
+                        $"Bag numbered '{bag.Number}' is missing parcels");
             }
             
             if (ModelState.ErrorCount > 0)
@@ -120,21 +180,11 @@ namespace WebApp.Controllers
             return shipment;
         }
 
-        private async Task<Shipment> ValidateAndCreate(ShipmentModel shipmentModel)
+        private void ValidateShipment(Shipment shipment)
         {
-            if (await AppBLL.Shipments.Find(shipmentModel.Number) != null)
-                ModelState.AddModelError(nameof(ShipmentModel.Number),
-                    "Shipment with identical Number already created");
-
-            if (shipmentModel.FlightDate < DateTime.Now)
+            if (shipment.FlightDate < DateTime.Now)
                 ModelState.AddModelError(nameof(ShipmentModel.FlightDate), 
                     "Flight date cannot be in the past");
-            
-            if (ModelState.ErrorCount > 0)
-                return null;
-
-            var shipment = ShipmentMapper.MapToDomain(shipmentModel);
-            return await AppBLL.Shipments.Add(shipment);
         }
     }
 }

@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Core.Domain
 {
-    public class Shipment
+    public class Shipment : IEntity
     {
         [Key]
         [Required]

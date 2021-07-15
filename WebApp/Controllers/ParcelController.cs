@@ -24,6 +24,23 @@ namespace WebApp.Controllers
 
         private AppBLL AppBLL { get; }
 
+        /// <summary>Get the parcel by specified number</summary>
+        /// <param name="number">Parcel number</param>
+        /// <returns>Parcel</returns>
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [HttpGet("Number/{number}")]
+        public async Task<ActionResult<Parcel>> GetParcel(string number)
+        {
+            var parcel = await AppBLL.Parcels.Find(number);
+            if (parcel != null)
+                return Ok(parcel);
+            
+            ModelState.AddModelError(nameof(ParcelModel.Number), 
+                "Parcel with specified number does not exist");
+            return BadRequest(ModelState);
+        }
+
         /// <summary>Create a new parcel</summary>
         /// <returns>A newly created parcel</returns>
         /// <param name="parcelModel">Parcel model</param>
@@ -62,36 +79,73 @@ namespace WebApp.Controllers
             return Ok(newParcels);
         }
 
+        /// <summary>Update the parcel</summary>
+        /// <returns>Updated parcel</returns>
+        /// <param name="parcelModel">Parcel model</param>
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [HttpPost]
+        public async Task<ActionResult<Parcel>> UpdateParcel(ParcelModel parcelModel)
+        {
+            var parcel = await ValidateAndUpdate(parcelModel);
+            if (parcel == null)
+                return BadRequest(ModelState);
+
+            await AppBLL.SaveChangesAsync();
+            return Ok(parcel);
+        }
+
+        private async Task<Parcel> ValidateAndUpdate(ParcelModel parcelModel)
+        {
+            var bag = await AppBLL.Bags.Find(parcelModel.BagNumber);
+            
+            ValidateParcelModel(parcelModel);
+            await ValidateBagAndShipment(bag);
+
+            if (!await AppBLL.Parcels.Exists(parcelModel.Number))
+                ModelState.AddModelError(nameof(ParcelModel.Number), "Parcel not found");
+
+            if (ModelState.ErrorCount > 0)
+                return null;
+
+            return await AppBLL.Parcels.Update(ParcelMapper.MapToDomain(parcelModel));
+        }
+
         private async Task<Parcel> ValidateAndCreate(ParcelModel parcelModel)
         {
-            if (decimal.Round(parcelModel.Weight, 3) != parcelModel.Weight)
-                ModelState.AddModelError(nameof(ParcelModel.Weight), "Too many decimal places");
-            if (decimal.Round(parcelModel.Price, 3) != parcelModel.Price)
-                ModelState.AddModelError(nameof(ParcelModel.Price), "Too many decimal places");
+            var bag = await AppBLL.Bags.FindIncluded(parcelModel.BagNumber);
+            
+            ValidateParcelModel(parcelModel);
+            await ValidateBagAndShipment(bag);
 
-            var parcel = ParcelMapper.MapToDomain(parcelModel);
-            var bag = await AppBLL.Bags.FindIncluded(parcel.BagNumber);
-
-            if (bag == null)
-            {
-                ModelState.AddModelError(nameof(ParcelModel.BagNumber), "Bag not found");
-            }
-            else
-            {
-                var shipment = await AppBLL.Shipments.Find(bag.ShipmentNumber);
-                if (shipment.Finalized)
-                    ModelState.AddModelError(nameof(ParcelModel.BagNumber), "Shipment is already finalized");
-            }
-
-            if (await AppBLL.Parcels.Find(parcel.Number) != null)
+            if (await AppBLL.Parcels.Exists(parcelModel.Number))
                 ModelState.AddModelError(nameof(ParcelModel.Number),
                     "Parcel with identical Number already created");
 
             if (bag == null || ModelState.ErrorCount > 0)
                 return null;
 
-            bag.Parcels.Add(parcel);
-            return parcel;
+            return AppBLL.Parcels.Add(ParcelMapper.MapToDomain(parcelModel), bag);
+        }
+
+        private void ValidateParcelModel(ParcelModel parcelModel)
+        {
+            if (decimal.Round(parcelModel.Weight, 3) != parcelModel.Weight)
+                ModelState.AddModelError(nameof(ParcelModel.Weight), "Too many decimal places");
+            if (decimal.Round(parcelModel.Price, 3) != parcelModel.Price)
+                ModelState.AddModelError(nameof(ParcelModel.Price), "Too many decimal places");
+        }
+
+        private async Task ValidateBagAndShipment(Bag bag)
+        {
+            if (bag == null)
+                ModelState.AddModelError(nameof(ParcelModel.BagNumber), "Bag not found");
+            else
+            {
+                var shipment = await AppBLL.Shipments.Find(bag.ShipmentNumber);
+                if (shipment.Finalized)
+                    ModelState.AddModelError(nameof(ParcelModel.BagNumber), "Shipment is already finalized");
+            }
         }
     }
 }
