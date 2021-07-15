@@ -1,3 +1,4 @@
+import { IShipment } from './../../domain/IShipment';
 import { Router } from 'aurelia-router';
 import { LogManager, autoinject } from "aurelia-framework";
 import { ShipmentService } from 'services/shipment-service';
@@ -21,6 +22,13 @@ export class Edit {
     private router: Router
   ) { }
 
+  activate(parameters: { number: string; }) {
+    if (!parameters.number)
+      return;
+
+    this.populateInputFields(parameters.number);
+  }
+
   submit() {
     this.errorTitle = undefined;
     this.errorDetails = undefined;
@@ -34,7 +42,7 @@ export class Edit {
 
     console.log(json(shipment));
 
-    this.shipmentService.updateShipment(shipment).then(() => {
+    this.shipmentService.put(shipment).then(() => {
       this.router.navigateToRoute('home');
     }).catch(error => {
       Utils.getErrors(error).then(errors => {
@@ -47,7 +55,7 @@ export class Edit {
   }
 
   populateInputFields(number: string) {
-    this.shipmentService.getShipment(number).then(result => {
+    this.shipmentService.fetch<IShipment>(number).then(result => {
       this.number = result.number;
       this.airport = result.airport;
       this.flightNumber = result.flightNumber;

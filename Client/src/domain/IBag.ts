@@ -1,3 +1,4 @@
+import { IShipment } from './IShipment';
 import { IWeighedPriced } from './base/IWeighedPriced';
 import { BagType } from './enums/BagType';
 import { INumbered } from "./base/INumbered";

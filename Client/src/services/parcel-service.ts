@@ -13,16 +13,4 @@ export class ParcelService extends BaseService {
   ) {
     super(httpClient, endPoint);
   }
-
-  getParcel(number: string): Promise<IParcel> {
-    return super.fetch(`/Number/${number}`);
-  }
-
-  createParcel(parcel: IParcel): Promise<Response> {
-    return super.post(parcel);
-  }
-
-  updateParcel(parcel: IParcel): Promise<Response> {
-    return super.put(parcel);
-  }
 }

@@ -48,6 +48,5 @@ The client application provides a simple overview of shipments, bags and parcels
 ## TODO
 
 - Unit tests
-- Add missing CRUD operations (currently, only Create and Read are supported)
 - Better structure for bags (currently they share the same object, but this isn't really ideal)
 - Better client-side validation with better messages

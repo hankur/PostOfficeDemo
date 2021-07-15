@@ -35,7 +35,7 @@ export class Index {
 
     console.log(json(shipment));
 
-    this.shipmentService.createShipment(shipment).then(() => {
+    this.shipmentService.post(shipment).then(() => {
       this.router.navigateToRoute('home');
     }).catch(error => {
       Utils.getErrors(error).then(errors => {

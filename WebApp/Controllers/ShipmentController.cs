@@ -107,13 +107,13 @@ namespace WebApp.Controllers
         }
 
         /// <summary>Finalize the shipment so it can't be modified anymore</summary>
-        /// <param name="shipmentNumber">Shipment number</param>
+        /// <param name="number">Shipment number</param>
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [HttpPost("{shipmentNumber}/Finalize")]
-        public async Task<ActionResult<Shipment>> Finalize(string shipmentNumber)
+        [HttpPost("Number/{number}/Finalize")]
+        public async Task<ActionResult<Shipment>> Finalize(string number)
         {
-            var shipment = await ValidateAndFinalize(shipmentNumber);
+            var shipment = await ValidateAndFinalize(number);
             if (shipment == null)
                 return BadRequest(ModelState);
             

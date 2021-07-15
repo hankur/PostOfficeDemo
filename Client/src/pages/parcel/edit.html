@@ -16,7 +16,7 @@
         <div class="form-group">
           <label for="number">Parcel number</label>
           <input type="text" class="form-control" id="number" value.bind="number"
-                 pattern="^[a-zA-Z]{2}[0-9]{6}[a-zA-Z]{2}$">
+                 pattern="^[a-zA-Z]{2}[0-9]{6}[a-zA-Z]{2}$" readonly disabled>
         </div>
 
         <div class="form-group">
@@ -45,7 +45,7 @@
       </form>
 
       <button type="submit" form="edit-parcel-form"
-              class="card-link btn btn-outline-success align-self-end">
+              class="card-link btn btn-outline-success align-self-end mt-2">
         Save
       </button>
     </div>

@@ -28,14 +28,14 @@ export class Home {
     this.errorTitle = undefined;
     this.errorDetails = undefined;
 
-    this.shipmentService.getAllShipments().then(result => {
+    this.shipmentService.fetchAll<IShipment>().then(result => {
       this.shipments = result;
 
       console.log(this.shipments);
 
       // make dates UTC ISO8601
       this.shipments.forEach(shipment => {
-        shipment.flightDate = new Date(shipment.flightDate + "Z");
+        shipment.flightDate = new Date(shipment.flightDate);
 
         shipment.bags.forEach(bag => {
           bag.typeName = BagType[bag.type];
@@ -59,7 +59,20 @@ export class Home {
   }
 
   finalize(shipment: IShipment) {
-    this.shipmentService.finalize(shipment.number).then(_ => this.loadShipments());
+    this.shipmentService.finalize(shipment.number)
+      .then(_ => this.loadShipments())
+      .catch(error => {
+        Utils.getErrors(error).then(errors => {
+          console.log(errors);
+
+          this.errorTitle = Object.keys(errors)[0];
+          this.errorDetails = Object.values(errors)[0][0] as string;
+        });
+      });;
+  }
+
+  editShipment(shipment: IShipment) {
+    this.router.navigateToRoute('shipmentEdit', { number: shipment.number });
   }
 
   toggleBagList(shipment: IShipment) {

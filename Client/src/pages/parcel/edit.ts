@@ -42,7 +42,7 @@ export class Edit {
     this.errorTitle = undefined;
     this.errorDetails = undefined;
 
-    this.bagService.getAllBags().then(result => {
+    this.bagService.fetchAll<IBag>().then(result => {
       this.bags = result;
 
       console.log(this.bags);
@@ -71,7 +71,7 @@ export class Edit {
 
     console.log(json(parcel));
 
-    this.parcelService.updateParcel(parcel).then(() => {
+    this.parcelService.put(parcel).then(() => {
       this.router.navigateToRoute('home');
     }).catch(error => {
       Utils.getErrors(error).then(errors => {
@@ -84,7 +84,7 @@ export class Edit {
   }
 
   populateInputFields(number: string) {
-    this.parcelService.getParcel(number).then(result => {
+    this.parcelService.fetch<IParcel>(number).then(result => {
       this.number = result.number;
       this.bagNumber = result.bagNumber;
       this.recipient = result.recipient;

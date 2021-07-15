@@ -12,6 +12,7 @@
           <th>Flight number</th>
           <th>Flight date</th>
           <th>Finalized</th>
+          <th>Edit?</th>
           <th>Finalize?</th>
         </tr>
       </thead>
@@ -23,6 +24,8 @@
           <td>${shipment.flightNumber}</td>
           <td>${shipment.flightDate | datetimeFormat}</td>
           <td>${shipment.finalized}</td>
+          <td><button type="button" class="btn btn-info" click.trigger="editShipment(shipment)"
+                    if.bind="!shipment.finalized">Edit</button></td>
           <td><button type="button" class="btn btn-success" click.trigger="finalize(shipment)"
                     if.bind="!shipment.finalized">Finalize</button></td>
         </tr>
@@ -31,7 +34,7 @@
           <td colspan="6" class="p-0">
             <div class="collapse px-5" data-bs-parent="#accordion"
                  data-bag-list.bind="shipment.number">
-              <bag-list bags.bind="shipment.bags"></bag-list>
+              <bag-list finalized.bind="shipment.finalized" bags.bind="shipment.bags"></bag-list>
             </div>
           </td>
         </tr>

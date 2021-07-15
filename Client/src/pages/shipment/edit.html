@@ -9,7 +9,8 @@
         <div class="form-group">
           <label for="number">Shipment number</label>
           <input type="text" class="form-control" id="number" value.bind="number"
-                 placeholder="XXX-XXXXXX" pattern="^[a-zA-Z0-9]{3}-[a-zA-Z0-9]{6}$">
+                 placeholder="XXX-XXXXXX" pattern="^[a-zA-Z0-9]{3}-[a-zA-Z0-9]{6}$" readonly
+                 disabled>
         </div>
 
         <div class="form-group">
@@ -37,7 +38,7 @@
       </form>
 
       <button type="submit" form="edit-shipment-form"
-              class="card-link btn btn-outline-success align-self-end">
+              class="card-link btn btn-outline-success align-self-end mt-2">
         Save
       </button>
     </div>

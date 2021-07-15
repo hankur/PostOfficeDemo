@@ -37,14 +37,14 @@ export class Index {
     this.errorTitle = undefined;
     this.errorDetails = undefined;
 
-    this.shipmentService.getAllShipments().then(result => {
+    this.shipmentService.fetchAll<IShipment>().then(result => {
       this.shipments = result;
 
       console.log(this.shipments);
 
       // make dates UTC ISO8601
       this.shipments.forEach(shipment => {
-        shipment.flightDate = new Date(shipment.flightDate + "Z");
+        shipment.flightDate = new Date(shipment.flightDate);
       });
     }).catch(error => {
       Utils.getErrors(error).then(errors => {
@@ -85,7 +85,7 @@ export class Index {
 
     console.log(json(bag));
 
-    this.bagService.createBag(bag).then(() => {
+    this.bagService.post(bag).then(() => {
       this.router.navigateToRoute('home');
     }).catch(error => {
       Utils.getErrors(error).then(errors => {

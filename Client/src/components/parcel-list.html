@@ -9,6 +9,7 @@
         <th>Destination country</th>
         <th class="text-end">Weight</th>
         <th class="text-end">Price</th>
+        <th if.bind="!finalized">Edit?</th>
       </tr>
     </thead>
 
@@ -19,6 +20,11 @@
         <td>${parcel.destination}</td>
         <td class="text-end">${parcel.weight} kg</td>
         <td class="text-end">${parcel.price | currencyFormat}</td>
+        <td if.bind="!finalized">
+          <button type="button" class="btn btn-info" click.trigger="editParcel(parcel)">
+            Edit
+          </button>
+        </td>
         </td>
       </tr>
     </tbody>

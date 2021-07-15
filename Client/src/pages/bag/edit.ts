@@ -1,4 +1,5 @@
-import { ILetterBag } from '../../domain/ILetterBag';
+import { IBag } from 'domain/IBag';
+import { ILetterBag } from 'domain/ILetterBag';
 import { BagType } from 'domain/enums/BagType';
 import { Router } from 'aurelia-router';
 import { LogManager, autoinject } from "aurelia-framework";
@@ -45,14 +46,14 @@ export class Edit {
     this.errorTitle = undefined;
     this.errorDetails = undefined;
 
-    this.shipmentService.getAllShipments().then(result => {
+    this.shipmentService.fetchAll<IShipment>().then(result => {
       this.shipments = result;
 
       console.log(this.shipments);
 
       // make dates UTC ISO8601
       this.shipments.forEach(shipment => {
-        shipment.flightDate = new Date(shipment.flightDate + "Z");
+        shipment.flightDate = new Date(shipment.flightDate);
       });
     }).catch(error => {
       Utils.getErrors(error).then(errors => {
@@ -93,7 +94,7 @@ export class Edit {
 
     console.log(json(bag));
 
-    this.bagService.updateBag(bag).then(_ => {
+    this.bagService.put(bag).then(_ => {
       this.router.navigateToRoute('home');
     }).catch(error => {
       Utils.getErrors(error).then(errors => {
@@ -106,7 +107,7 @@ export class Edit {
   }
 
   populateInputFields(number: string) {
-    this.bagService.getBag(number).then(result => {
+    this.bagService.fetch<IBag>(number).then(result => {
       if (this.instanceOfLetterBag(result)) {
         this.letterNumber = result.number;
         this.letterShipmentNumber = result.shipmentNumber;

@@ -84,7 +84,7 @@ namespace WebApp.Controllers
         /// <param name="parcelModel">Parcel model</param>
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [HttpPost]
+        [HttpPut]
         public async Task<ActionResult<Parcel>> UpdateParcel(ParcelModel parcelModel)
         {
             var parcel = await ValidateAndUpdate(parcelModel);

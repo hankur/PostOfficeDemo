@@ -35,7 +35,7 @@ export class Index {
     this.errorTitle = undefined;
     this.errorDetails = undefined;
 
-    this.bagService.getAllBags().then(result => {
+    this.bagService.fetchAll<IBag>().then(result => {
       this.bags = result;
 
       console.log(this.bags);
@@ -64,7 +64,7 @@ export class Index {
 
     console.log(json(parcel));
 
-    this.parcelService.createParcel(parcel).then(() => {
+    this.parcelService.post(parcel).then(() => {
       this.router.navigateToRoute('home');
     }).catch(error => {
       Utils.getErrors(error).then(errors => {

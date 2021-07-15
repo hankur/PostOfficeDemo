@@ -27,14 +27,17 @@ export class BaseService {
     this.serviceEndpoint = endPoint;
   }
 
-  fetchOne<TEntity>(id: number, finalEndpoint: string = ""): Promise<TEntity> {
+  fetchOne<TEntity>(number: string, finalEndpoint: string = ""): Promise<TEntity> {
     if (finalEndpoint == "")
-      finalEndpoint = `/${id}`;
+      finalEndpoint = `/Number/${number}`;
 
     return this.fetch<TEntity>(finalEndpoint);
   }
 
   fetchAll<TEntity>(finalEndpoint: string = ""): Promise<TEntity[]> {
+    if (finalEndpoint == "")
+      finalEndpoint = `/List`;
+
     return this.fetch<TEntity[]>(finalEndpoint);
   }
 
@@ -59,9 +62,9 @@ export class BaseService {
   }
 
 
-  delete(id: number, finalEndpoint: string = ""): Promise<Response> {
+  delete(number: string, finalEndpoint: string = ""): Promise<Response> {
     if (finalEndpoint == "")
-      finalEndpoint = `/${id}`;
+      finalEndpoint = `/Number/${number}`;
 
     let url = `${this.serviceEndpoint}${finalEndpoint}`;
     return new Promise((res, rej) => this.serviceHttpClient.delete(url, null)

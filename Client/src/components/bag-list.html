@@ -10,6 +10,7 @@
         <th class="text-end">Count of letters</th>
         <th class="text-end">Weight</th>
         <th class="text-end">Price</th>
+        <th if.bind="!finalized">Edit?</th>
       </tr>
     </thead>
 
@@ -20,6 +21,10 @@
         <td class="text-end">${bag.letterCount | printOrNone}</td>
         <td class="text-end">${bag.weight} kg</td>
         <td class="text-end">${bag.price | currencyFormat}</td>
+        <td if.bind="!finalized">
+          <button type="button" class="btn btn-info" click.trigger="editBag(bag)">
+            Edit
+          </button>
         </td>
       </tr>
 
@@ -27,7 +32,7 @@
         <td colspan="7" class="p-0">
           <div class="collapse px-5" data-parcel-list.bind="bag.number"
                data-bs-parent="#accordion-bags">
-            <parcel-list parcels.bind="bag.parcels"></parcel-list>
+            <parcel-list finalized.bind="finalized" parcels.bind="bag.parcels"></parcel-list>
           </div>
         </td>
       </tr>

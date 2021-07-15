@@ -13,20 +13,4 @@ export class BagService extends BaseService {
   ) {
     super(httpClient, endPoint);
   }
-
-  getBag(number: string): Promise<IBag> {
-    return super.fetch(`/Number/${number}`);
-  }
-
-  getAllBags(): Promise<IBag[]> {
-    return super.fetchAll<IBag>(`/List`);
-  }
-
-  createBag(bag: any): Promise<Response> {
-    return super.post(bag);
-  }
-
-  updateBag(bag: any): Promise<Response> {
-    return super.put(bag);
-  }
 }

@@ -14,23 +14,7 @@ export class ShipmentService extends BaseService {
     super(httpClient, endPoint);
   }
 
-  getShipment(number: string): Promise<IShipment> {
-    return super.fetch(`/Number/${number}`);
-  }
-
-  getAllShipments(): Promise<IShipment[]> {
-    return super.fetchAll<IShipment>(`/List`);
-  }
-
   finalize(number: string): Promise<Response> {
-    return super.post(null, `/${number}/Finalize`);
-  }
-
-  createShipment(shipment: any): Promise<Response> {
-    return super.post(shipment);
-  }
-
-  updateShipment(shipment: any): Promise<Response> {
-    return super.put(shipment);
+    return super.post(null, `/Number/${number}/Finalize`);
   }
 }
